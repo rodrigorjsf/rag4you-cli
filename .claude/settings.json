@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "python-development@claude-code-workflows": true,
+    "comprehensive-review@claude-code-workflows": true
+  }
+}
