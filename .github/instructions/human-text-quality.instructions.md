@@ -1,5 +1,5 @@
 ---
-applyTo: "README.md,CONTRIBUTING.md,CLAUDE.md,.claude/**/*.md,.github/copilot-instructions.md,.github/instructions/**/*.md,docs/**/*.md,**/locales/*.yaml,**/locales/*.yml,**/locales/*.json"
+applyTo: "README.md,CONTRIBUTING.md,CLAUDE.md,.claude/**/*.md,.github/copilot-instructions.md,.github/instructions/**/*.md,docs/**/*.md,wiki/**/*.md,**/locales/*.yaml,**/locales/*.yml,**/locales/*.json"
 ---
 
 # Human Text Quality

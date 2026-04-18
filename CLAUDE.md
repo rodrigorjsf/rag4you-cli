@@ -12,6 +12,8 @@
 - If creating any skill for this project, alway use the skill `/superpowers:writing-skills` to create it.
   - Other artifacs (as rules, subagents, hooks, etc) must use `agent-customizer` plugin skills.
 - Keep the Claude Code instruction surface (`CLAUDE.md`, `.claude/rules/`) mirrored with the GitHub Copilot instruction surface (`.github/copilot-instructions.md`, `.github/instructions/`). When one side changes, update the equivalent files on the other side in the same task.
+- Use the `wiki` to guide you throught documentations and project specifications.
+- Before implementing a feature, consult `wiki/knowledge/index.md` for relevant research pages. When implementation changes invalidate wiki content, update the affected knowledge pages in the same task.
 - YOU MUST update the `README.md` file whenever you add, remove, or significantly change project functionality, file structures, or environment variables following the `docs/templates/readme-template.md`.
 - After completing any major task or PR, review README.md to ensure it reflects current project state.
 

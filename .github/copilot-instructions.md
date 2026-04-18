@@ -25,6 +25,8 @@
 
 - Update `docs/ROADMAP.md` when a sub-project's status, scope, or delivered artifacts change.
 - If you update `CLAUDE.md`, `.claude/rules/`, `.github/copilot-instructions.md`, or `.github/instructions/`, mirror the equivalent change across the other instruction surface in the same task.
+- Use the `wiki` to guide you throught documentations and project specifications.
+- Before implementing a feature, consult `wiki/knowledge/index.md` for relevant research pages. When implementation changes invalidate wiki content, update the affected knowledge pages in the same task.
 - Keep code, comments, docstrings, schemas, config keys, documentation, and commit messages in English. Only CLI user-facing strings belong in locale files.
 - Keep sibling locale files in lockstep. A locale change must update the same keys, placeholders, and pluralization structure across all sibling locale files in the same change set.
 - When Python code lands, follow the repo's Python rule set: keep runtime knobs configurable, keep CLI strings in locale files, target at least 90% coverage for edited Python areas, and use atomic writes or append-only updates for checkpoint and persistence flows.
