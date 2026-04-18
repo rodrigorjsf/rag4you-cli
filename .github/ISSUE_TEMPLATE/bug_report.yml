@@ -1,0 +1,87 @@
+name: Bug Report
+description: Report a bug in rag4you-cli. Include reproduction steps and the specific failure mode — not just "it doesn't work."
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before submitting:** Search [existing issues](/issues) for duplicates.
+        If a related closed issue exists, reference it and explain what's different about your report.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        What happened? What did you expect instead?
+        Be specific — "it broke" is not a description. Include the exact failure mode:
+        what the agent did wrong, what output was incorrect, or what behavior diverged from the skill's documented intent.
+      placeholder: "When I ran the init-agents skill on a monorepo with 4 scopes, the generated root AGENTS.md contained scope-specific rules that should have been in scope files..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stack
+    attributes:
+      label: Stack
+      description: Which stack is affected?
+      options:
+        - configuration (e.g., harness setup, model configuration)
+        - core CLI (e.g., built-in tools, agent execution)
+        - specific artefact/skill (e.g., a bug in the codebase agent)
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: |
+        Step-by-step instructions to reproduce the issue. Include the exact prompt or command used.
+        If the bug is non-deterministic, describe the conditions under which it occurs and how often.
+      placeholder: |
+        1. Clone a project with structure: ...
+        2. Run the command: `rag4you init-agents --config ...`
+        3. Observe that the generated file at ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Harness, version, and model used when the bug occurred.
+      placeholder: |
+        - Harness: Claude Code v1.x.x
+        - Model: claude-sonnet-4-20250514
+        - OS: macOS 15.x / Ubuntu 24.04
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Output
+      description: |
+        Paste error messages, unexpected agent output, or generated file content that demonstrates the bug.
+        Redact any sensitive project information.
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severely does this affect your usage?
+      options:
+        - blocks usage
+        - workaround available
+        - cosmetic
+        - other
+    validations:
+      required: true
