@@ -3,6 +3,7 @@
 [![Python Version][python-image]][python-url]
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
+[![Test coverage][test-coverage-badge]][test-coverage-url]
 ![GitHub forks](https://img.shields.io/github/forks/rag4you/rag4you?style=for-the-badge)
 <!-- ADD ADITIONAL TECH BADGES-->
 
