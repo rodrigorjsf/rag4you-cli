@@ -27,13 +27,16 @@ Code sweep will execute only 1 embedding model tier (jina-base 768d). Report wil
 
 Gate: `uv run pytest bench/tests/test_i18n.py bench/tests/test_metrics.py` all green.
 
-### Phase 2 — Golden dataset (20 queries)
+### Phase 2 — Golden dataset (20 queries) ✅
 
 Read actual `agent-engineering-toolkit` file structure, write all 20 golden queries with
 verified `expected_files`. Replace the Phase 1 stub in `bench/golden/dataset.yaml`.
 
 Gate: Each query has verified `expected_files`; spot-run 3 queries against toolkit to
 confirm at least 1 config achieves p@5 > 0.
+
+Completed 2026-04-19: 20 queries verified against actual toolkit corpus. Distribution:
+13 docs / 5 code / 2 all-collection; 5 conceptual + 3 factual + 4 procedural + 6 navigational + 2 failure.
 
 ### Phase 3 — Judge plugins
 

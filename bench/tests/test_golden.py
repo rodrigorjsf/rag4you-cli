@@ -9,7 +9,7 @@ from bench.golden.schema import Collection, Difficulty, GoldenQuery, QueryKind, 
 def test_load_golden_queries_returns_list():
     queries = load_golden_queries()
     assert isinstance(queries, list)
-    assert len(queries) > 0
+    assert len(queries) == 20
 
 
 def test_load_golden_queries_all_valid():

@@ -1,78 +1,343 @@
 # Golden query dataset — agent-engineering-toolkit
-# Distribution target: 5 docs-conceptual, 3 docs-nav/factual, 4 code-find-symbol,
-#   4 code-how-does-X, 2 cross-collection, 2 failure-cases = 20 total
+# Distribution: 8 docs-conceptual/factual/procedural, 3 docs-navigational,
+#   5 code-symbol/procedural, 2 cross-collection, 2 failure-cases = 20 total
 #
-# Phase 1 stub: 5 queries. Full 20 verified queries added in Phase 2
-# after reading actual agent-engineering-toolkit file structure.
-# NOTE: expected_files paths must be verified against the actual toolkit corpus
-# before running the benchmark.
+# File paths are relative to the toolkit root (rag.config.yaml location),
+# which is how file_path is stored in the RAG database (see rag/index.py line ~100).
+# Paths verified against actual toolkit corpus on 2026-04-19.
+
+# ── docs collection ─────────────────────────────────────────────────────────
 
 - id: docs-001
   collection: docs
-  query: "what is the difference between skills and plugins?"
+  query: "What are skills in Claude Code and how do they differ from regular custom commands?"
+  query_kind: conceptual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/claude-code/skills/extend-claude-with-skills.md"
+  expected_answer: |
+    Skills are SKILL.md files that extend what Claude can do. They provide
+    instructions Claude follows when invoked with a /slash-command or automatically
+    when relevant. Custom commands (in .claude/commands/) have been merged into
+    skills — they work the same way. Skills add features: a directory for
+    supporting files, frontmatter for invocation control, and automatic
+    discovery by Claude.
+  must_contain:
+    - "SKILL.md"
+    - "custom commands"
+  tags: [knowledge-lookup, skills]
+
+- id: docs-002
+  collection: docs
+  query: "How does Claude Code persist memory and instructions across sessions?"
+  query_kind: conceptual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/claude-code/memory/how-claude-remembers-a-project.md"
+  expected_answer: |
+    Two mechanisms carry knowledge across sessions: CLAUDE.md files (written by
+    the user) provide persistent instructions, and auto memory (written by Claude
+    itself) stores corrections and preferences. Both are loaded at the start of
+    every session. CLAUDE.md files can be scoped: project (./CLAUDE.md), user
+    (~/.claude/CLAUDE.md), or org-managed policy files.
+  must_contain:
+    - "CLAUDE.md"
+    - "auto memory"
+  tags: [knowledge-lookup, memory]
+
+- id: docs-003
+  collection: docs
+  query: "What is the difference between a subagent and an agent team in Claude Code?"
   query_kind: conceptual
   difficulty: medium
   length: short
   expected_files:
-    - "docs/skills.md"
-    - "docs/plugins.md"
+    - "docs/claude-code/subagents/creating-custom-subagents.md"
   expected_answer: |
-    Skills are reusable capability units that Claude Code can invoke, defined as
-    SKILL.md files. Plugins bundle multiple skills, hooks, rules, and subagents
-    together as an installable unit. Skills live inside plugins.
+    Subagents work within a single session; each runs in its own context window
+    with a custom system prompt and specific tool access. Agent teams coordinate
+    across separate sessions — use them when you need multiple agents working in
+    parallel and communicating with each other. Subagents cannot spawn other
+    subagents.
   must_contain:
-    - "skill"
-    - "plugin"
-  tags: [knowledge-lookup, ambiguous-target]
+    - "subagent"
+    - "context window"
+  tags: [knowledge-lookup, subagents]
 
-- id: docs-002
+- id: docs-004
   collection: docs
-  query: "how do hooks work in Claude Code?"
+  query: "What is the difference between standalone skills and plugin skills?"
   query_kind: conceptual
-  difficulty: easy
+  difficulty: medium
   length: short
   expected_files:
-    - "docs/hooks.md"
+    - "docs/claude-code/plugins/claude-create-plugin-doc.md"
+    - "docs/claude-code/skills/extend-claude-with-skills.md"
   expected_answer: |
-    Hooks are shell commands configured to run in response to Claude Code events
-    such as PreToolUse, PostToolUse, Notification, and Stop. They can block,
-    approve, or modify Claude's actions by returning exit codes and JSON.
+    Standalone skills live in .claude/skills/ and use short names like /hello.
+    Plugin skills are packaged in directories with a .claude-plugin/plugin.json
+    manifest and use namespaced names like /plugin-name:hello. Plugins are better
+    for sharing across projects, versioning, and distributing via marketplace;
+    standalone is better for personal or single-project use.
   must_contain:
-    - "hook"
-    - "event"
-  tags: [knowledge-lookup]
+    - "plugin"
+    - "standalone"
+  tags: [knowledge-lookup, skills, plugins]
 
-- id: docs-003
+- id: docs-005
   collection: docs
-  query: "what is the PostToolUse hook token limit?"
+  query: "What hook event fires when Claude Code is waiting for user input?"
   query_kind: factual
   difficulty: easy
   length: short
   expected_files:
-    - "docs/hooks.md"
+    - "docs/claude-code/hooks/automate-workflow-with-hooks.md"
   expected_answer: |
-    PostToolUse hooks receive tool output in stdin. The output is truncated to
-    a configured token limit to avoid overloading the context window.
+    The Notification hook event fires when Claude Code needs user attention,
+    for example when it is waiting for input. It is configured in settings.json
+    under the "hooks" key with a "Notification" entry containing a shell command.
+  must_contain:
+    - "Notification"
+  tags: [fact-lookup, hooks]
+
+- id: docs-006
+  collection: docs
+  query: "What are the three built-in subagents available in Claude Code?"
+  query_kind: factual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/claude-code/subagents/creating-custom-subagents.md"
+  expected_answer: |
+    The three built-in subagents are: Explore (fast read-only agent using Haiku
+    for codebase search), Plan (read-only research agent used in plan mode), and
+    General-purpose (versatile agent for complex multi-step tasks).
+  must_contain:
+    - "Explore"
+    - "Plan"
+  tags: [fact-lookup, subagents]
+
+- id: docs-007
+  collection: docs
+  query: "How do I create a skill that Claude invokes automatically without being explicitly called?"
+  query_kind: procedural
+  difficulty: medium
+  length: short
+  expected_files:
+    - "docs/claude-code/skills/extend-claude-with-skills.md"
+  expected_answer: |
+    Create a SKILL.md file with a frontmatter description field that tells Claude
+    when to use the skill (e.g., "Use when explaining how code works"). Claude
+    reads the name and description from all skills at startup, and loads the full
+    SKILL.md automatically when the description matches the user's request.
+  must_contain:
+    - "description"
+    - "frontmatter"
+  tags: [how-to, skills]
+
+- id: docs-008
+  collection: docs
+  query: "How do I configure a PostToolUse hook to run a shell command after every file edit?"
+  query_kind: procedural
+  difficulty: medium
+  length: long
+  expected_files:
+    - "docs/claude-code/hooks/automate-workflow-with-hooks.md"
+  expected_answer: |
+    Add a PostToolUse entry to the hooks block in settings.json. Set the matcher
+    to "Edit" (or leave it empty to match all tools), and provide a command string.
+    The hook receives JSON context on stdin with the tool name, input, and output.
+    Example config: {"hooks": {"PostToolUse": [{"matcher": "Edit", "hooks":
+    [{"type": "command", "command": "your-script.sh"}]}]}}
   must_contain:
     - "PostToolUse"
-    - "token"
-  tags: [fact-lookup]
+    - "settings.json"
+  tags: [how-to, hooks]
+
+# ── docs — navigational ──────────────────────────────────────────────────────
+
+- id: docs-nav-001
+  collection: docs
+  query: "skill authoring best practices guide"
+  query_kind: navigational
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/shared/skill-authoring-best-practices.md"
+  expected_answer: |
+    The skill authoring best practices guide covers: keeping SKILL.md concise
+    (context window is shared), relying on Claude's existing knowledge, using
+    reference files for long content, writing clear Use-when descriptions,
+    and testing skills with real usage scenarios.
+  must_contain:
+    - "concise"
+  tags: [navigational, skills]
+
+- id: docs-nav-002
+  collection: docs
+  query: "hooks reference — full event schemas and JSON formats"
+  query_kind: navigational
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/claude-code/hooks/claude-hook-reference-doc.md"
+  expected_answer: |
+    The hooks reference documents all hook events (SessionStart, PreToolUse,
+    PostToolUse, Notification, etc.), their JSON input/output schemas, exit code
+    semantics, async hooks, HTTP hooks, prompt-based hooks, and MCP tool hooks.
+  must_contain:
+    - "PostToolUse"
+    - "SessionStart"
+  tags: [navigational, hooks]
+
+- id: docs-nav-003
+  collection: docs
+  query: "claude code prompting best practices"
+  query_kind: navigational
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/claude-code/claude-prompting-best-practices.md"
+  expected_answer: |
+    Claude Code prompting best practices include: being specific about desired
+    output, providing context upfront, using CLAUDE.md for project conventions,
+    and leveraging plan mode for complex changes before letting Claude write code.
+  must_contain: []
+  tags: [navigational, prompting]
+
+# ── code collection ──────────────────────────────────────────────────────────
 
 - id: code-001
   collection: code
-  query: "function that computes SHA-256 hash of a file"
-  query_kind: factual
+  query: "create-skill — SKILL.md that generates new skill files"
+  query_kind: navigational
   difficulty: easy
   length: short
   expected_files:
-    - "rag/corpus.py"
+    - "skills/create-skill/SKILL.md"
   expected_answer: |
-    The SHA-256 hash of a file is computed by reading the file in binary chunks
-    and updating a hashlib.sha256 digest, returning the hex digest string.
+    The create-skill SKILL.md defines the process for creating new SKILL.md files
+    grounded in the docs corpus. It enforces hard rules: never inline reference
+    content in SKILL.md body, keep SKILL.md under 500 lines, every description
+    must include a Use-when trigger phrase, every reference file must be ≤200 lines.
   must_contain:
-    - "sha256"
-    - "hashlib"
-  tags: [symbol-lookup]
+    - "create-skill"
+    - "SKILL.md"
+  tags: [symbol-lookup, skills]
+
+- id: code-002
+  collection: code
+  query: "init-agents skill for initializing AGENTS.md hierarchy"
+  query_kind: navigational
+  difficulty: easy
+  length: short
+  expected_files:
+    - "skills/init-agents/SKILL.md"
+  expected_answer: |
+    The init-agents skill generates a minimal AGENTS.md hierarchy based on the
+    ETH Zurich study showing developer-written minimal files outperform
+    comprehensive auto-generated ones. It uses progressive disclosure — never
+    one bloated file, never directory listings or obvious conventions.
+  must_contain:
+    - "init-agents"
+    - "AGENTS.md"
+  tags: [symbol-lookup, agents]
+
+- id: code-003
+  collection: code
+  query: "create-subagent skill definition"
+  query_kind: navigational
+  difficulty: easy
+  length: short
+  expected_files:
+    - "skills/create-subagent/SKILL.md"
+  expected_answer: |
+    The create-subagent skill generates subagent definitions with YAML frontmatter,
+    tool restrictions, and structured system prompts. Hard rules: no generic system
+    prompts, no write tools for read-only agents, every subagent must include role
+    definition + process steps + output format + self-verification.
+  must_contain:
+    - "create-subagent"
+  tags: [symbol-lookup, subagents]
+
+- id: code-004
+  collection: code
+  query: "PostToolUse hook shell script for RAG re-indexing on file changes"
+  query_kind: factual
+  difficulty: medium
+  length: short
+  expected_files:
+    - ".claude/hooks/check-rag-reindex.sh"
+  expected_answer: |
+    The check-rag-reindex.sh hook reads tool_name and file_path from JSON stdin,
+    only triggers on Edit and Create tool calls, and re-indexes the changed file
+    in the RAG knowledge base. It exits 0 early for non-file tools.
+  must_contain:
+    - "PostToolUse"
+    - "TOOL_NAME"
+  tags: [symbol-lookup, hooks, rag]
+
+- id: code-005
+  collection: code
+  query: "How to structure a skill with references subdirectory and templates"
+  query_kind: procedural
+  difficulty: medium
+  length: short
+  expected_files:
+    - "skills/create-skill/SKILL.md"
+  expected_answer: |
+    A skill directory should have SKILL.md at root, a references/ subdirectory
+    for long-form reference content (each file ≤200 lines), and optionally an
+    assets/templates/ subdirectory for output templates. The SKILL.md body should
+    reference these files with relative paths rather than inlining the content.
+  must_contain:
+    - "references/"
+  tags: [how-to, skills]
+
+# ── cross-collection ─────────────────────────────────────────────────────────
+
+- id: all-001
+  collection: all
+  query: "Agent Skills open standard specification for cross-tool skill compatibility"
+  query_kind: conceptual
+  difficulty: medium
+  length: short
+  expected_files:
+    - "docs/shared/skills-standard/README.md"
+    - "docs/shared/skills-standard/agentskills-specification.md"
+  expected_answer: |
+    The Agent Skills open standard (agentskills.io) defines a universal SKILL.md
+    format that works across multiple AI tools (Claude Code, Cursor, Copilot).
+    Skills follow a YAML frontmatter + markdown content structure. Claude Code
+    extends the standard with invocation control, subagent execution, and
+    dynamic context injection.
+  must_contain:
+    - "Agent Skills"
+    - "SKILL.md"
+  tags: [knowledge-lookup, skills, standard]
+
+- id: all-002
+  collection: all
+  query: "How do hooks integrate with the RAG re-indexing workflow?"
+  query_kind: procedural
+  difficulty: hard
+  length: long
+  expected_files:
+    - "docs/claude-code/hooks/automate-workflow-with-hooks.md"
+    - ".claude/hooks/check-rag-reindex.sh"
+  expected_answer: |
+    A PostToolUse hook fires after every Edit or Create tool call. The
+    check-rag-reindex.sh script reads the file path from the hook JSON input
+    and triggers incremental re-indexing of only the changed file, keeping
+    the RAG knowledge base in sync without a full re-index.
+  must_contain:
+    - "PostToolUse"
+    - "reindex"
+  tags: [how-to, hooks, rag]
+
+# ── failure / negative cases ─────────────────────────────────────────────────
 
 - id: fail-001
   collection: docs
@@ -82,8 +347,22 @@
   length: long
   expected_files: []
   expected_answer: |
-    This query is completely irrelevant to the agent-engineering-toolkit.
-    A correctly tuned RAG system should return no results or very low confidence
-    scores for this query.
+    This query is completely outside the agent-engineering-toolkit's domain.
+    A correctly calibrated RAG should return results with very low relevance
+    scores. Any match is noise, not signal.
+  must_contain: []
+  tags: [negative-case, should-miss]
+
+- id: fail-002
+  collection: docs
+  query: "GitHub Copilot enterprise seat management and billing API"
+  query_kind: failure
+  difficulty: medium
+  length: short
+  expected_files: []
+  expected_answer: |
+    This query is about GitHub Copilot billing, which is not covered by
+    the agent-engineering-toolkit documentation. Any retrieved chunks would
+    be false positives from superficial keyword overlap (e.g., "Copilot").
   must_contain: []
   tags: [negative-case, should-miss]
