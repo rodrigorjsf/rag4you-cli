@@ -1,0 +1,64 @@
+cli:
+  run:
+    starting: "Iniciando execução do bench {run_id}..."
+    cost_estimate: "Custo estimado: ~${cost} ({n_calls} chamadas × ~{avg_tokens} tokens em média)"
+    cost_estimate_free: "Custo estimado: $0,00 (cross-encoder executa localmente, sem chamadas de API)"
+    cost_confirm: "Continuar? [S/n]"
+    aborted: "Execução cancelada pelo usuário."
+    plan: "Plano de execução: {n_configs} configs × {n_queries} consultas × {n_top_k} top_k = {n_units} recuperações"
+    judge_info: "Juiz: {judge_type} ({judge_model})"
+    estimate_time: "Tempo estimado: ~{minutes} min"
+    complete: "Execução {run_id} concluída. Relatório em {report_path}"
+  resume:
+    found_units: "Retomando execução {run_id}: {done}/{total} unidades de trabalho já concluídas."
+    corpus_drift: "O corpus mudou desde que a execução foi criada. Use --allow-corpus-drift para continuar."
+    no_run: "Nenhuma execução encontrada com o id: {run_id}"
+    resuming: "Retomando do checkpoint: {done}/{total} ({pct}%) concluído"
+  status:
+    running: "Execução {run_id}: {done}/{total} ({pct}%) — juiz={judge}"
+    not_found: "Execução não encontrada: {run_id}"
+    no_runs: "Nenhuma execução do bench encontrada em {state_dir}"
+  report:
+    generating: "Gerando relatório para a execução {run_id}..."
+    saved: "Relatório salvo em {path}"
+  retry_failed:
+    found: "Encontradas {n} unidades de trabalho com falha na execução {run_id}. Tentando novamente..."
+    none: "Nenhuma unidade de trabalho com falha na execução {run_id}."
+  synth:
+    skipped: "Consultas sintéticas ignoradas — nenhum LLM disponível. Instale o Ollama e baixe {model}, ou use um juiz LLM, para habilitar o conjunto de {n} consultas sintéticas."
+    generating: "Gerando {n} consultas sintéticas a partir do corpus..."
+    dropped: "Descartadas {n} consultas sintéticas (chunk de origem não encontrado no top-10)."
+  index:
+    starting: "Indexando configuração {config_id} ({current}/{total})..."
+    complete: "Configuração {config_id} indexada em {elapsed}s"
+    cached: "Configuração {config_id} já indexada, ignorando"
+  query:
+    progress: "Consultando: {done}/{total} unidades de trabalho concluídas ({pct}%)"
+  judge:
+    progress: "Julgando: {done}/{total} julgamentos concluídos ({pct}%)"
+    cache_hit: "Cache do juiz: {n} unidades de trabalho já julgadas, ignorando chamadas de API"
+  sanity:
+    fail: "Verificação de sanidade falhou: RAG ou bench está quebrado — não está medindo nada útil. Abortando."
+    pass: "Verificação de sanidade aprovada."
+errors:
+  judge_api_failed: "Chamada ao juiz falhou após {attempts} tentativas: {error}"
+  index_failed: "Falha ao indexar a configuração {config_id}: {error}"
+  search_failed: "Busca falhou para a consulta {query_id} config {config_id}: {error}"
+  lock_held: "Outro processo do bench está em execução para {run_id}. Remova o arquivo de lock para forçar: {lock_path}"
+  corpus_hash_mismatch: "Hash do corpus divergente. A execução foi criada com arquivos diferentes. Use --allow-corpus-drift para continuar."
+  model_not_supported: "Modelo {model} não é suportado pelo fastembed. Esta configuração será ignorada."
+  ollama_unreachable: "Ollama inacessível em {url}. Inicie o Ollama ou escolha outro juiz."
+  missing_api_key: "Variável de ambiente {env_var} não está definida. Necessária para o juiz {judge_type}."
+report:
+  tldr_heading: "Resumo"
+  recommendations_heading: "Recomendações para os padrões do SP1"
+  configs_ranking_heading: "Ranking de configurações (composto)"
+  heatmaps_heading: "Mapas de calor (chunk × modelo) — pontuação de cobertura"
+  failure_analysis_heading: "Análise de falhas"
+  per_collection_heading: "Detalhes por coleção"
+  limitations_heading: "Limitações desta execução"
+  reproducibility_heading: "Reprodutibilidade"
+  judge_approx_note: "Juiz: {judge_model} — pontuações de cobertura são aproximadas (~approx) pois o fallback cross-encoder foi utilizado."
+  synth_skipped_note: "Consultas sintéticas foram ignoradas. Instale o Ollama e baixe {model}, ou use um juiz LLM, para habilitar o conjunto de {n} consultas sintéticas."
+  no_relevant_alert: "⚠️ {pct}% das consultas: nenhum chunk relevante no top-{k} → investigar"
+  self_sufficiency: "Taxa de autossuficiência: {pct}% (consultas onde top-{k} já é suficiente)"

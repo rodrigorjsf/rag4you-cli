@@ -2,7 +2,7 @@
 
 **Summary**: Authoritative academic and official sources for building the SP0 benchmark harness. Covers classical IR evaluation metrics, RAG-specific evaluation frameworks, benchmarking best practices, checkpoint/resume patterns, and token economy analysis.
 **Sources**: `docs/references/evaluation/bibliography.md`
-**Last updated**: 2025-07-22
+**Last updated**: 2026-04-19
 
 ---
 
@@ -117,7 +117,7 @@ TREC (Text REtrieval Conference) established the de facto standard for IR evalua
 
 ### 1.3 Metric Definitions and Formulas
 
-These are the exact metrics specified in the SP0 spec (`bench/metrics.py` — planned, not yet implemented) (source: docs/references/evaluation/bibliography.md):
+These are the exact metrics specified in the SP0 spec and implemented in `bench/metrics.py` (source: docs/references/evaluation/bibliography.md):
 
 #### Precision@k
 
@@ -492,7 +492,7 @@ ACM uses artifact badges to signal reproducibility:
 - **Artifacts Evaluated — Functional:** Code runs and produces claimed results.
 - **Results Reproduced:** An independent team reproduced the results.
 
-**SP0 implication:** The benchmark harness itself should be testable (`bench/tests/` — planned, not yet implemented) and its metrics computations verifiable against known inputs.
+**SP0 implication:** The benchmark harness itself is testable (`bench/tests/` — 48 tests, all green as of Phase 1) and its metrics computations are verifiable against known inputs.
 
 ---
 

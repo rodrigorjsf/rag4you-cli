@@ -1,0 +1,89 @@
+# Golden query dataset — agent-engineering-toolkit
+# Distribution target: 5 docs-conceptual, 3 docs-nav/factual, 4 code-find-symbol,
+#   4 code-how-does-X, 2 cross-collection, 2 failure-cases = 20 total
+#
+# Phase 1 stub: 5 queries. Full 20 verified queries added in Phase 2
+# after reading actual agent-engineering-toolkit file structure.
+# NOTE: expected_files paths must be verified against the actual toolkit corpus
+# before running the benchmark.
+
+- id: docs-001
+  collection: docs
+  query: "what is the difference between skills and plugins?"
+  query_kind: conceptual
+  difficulty: medium
+  length: short
+  expected_files:
+    - "docs/skills.md"
+    - "docs/plugins.md"
+  expected_answer: |
+    Skills are reusable capability units that Claude Code can invoke, defined as
+    SKILL.md files. Plugins bundle multiple skills, hooks, rules, and subagents
+    together as an installable unit. Skills live inside plugins.
+  must_contain:
+    - "skill"
+    - "plugin"
+  tags: [knowledge-lookup, ambiguous-target]
+
+- id: docs-002
+  collection: docs
+  query: "how do hooks work in Claude Code?"
+  query_kind: conceptual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/hooks.md"
+  expected_answer: |
+    Hooks are shell commands configured to run in response to Claude Code events
+    such as PreToolUse, PostToolUse, Notification, and Stop. They can block,
+    approve, or modify Claude's actions by returning exit codes and JSON.
+  must_contain:
+    - "hook"
+    - "event"
+  tags: [knowledge-lookup]
+
+- id: docs-003
+  collection: docs
+  query: "what is the PostToolUse hook token limit?"
+  query_kind: factual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "docs/hooks.md"
+  expected_answer: |
+    PostToolUse hooks receive tool output in stdin. The output is truncated to
+    a configured token limit to avoid overloading the context window.
+  must_contain:
+    - "PostToolUse"
+    - "token"
+  tags: [fact-lookup]
+
+- id: code-001
+  collection: code
+  query: "function that computes SHA-256 hash of a file"
+  query_kind: factual
+  difficulty: easy
+  length: short
+  expected_files:
+    - "rag/corpus.py"
+  expected_answer: |
+    The SHA-256 hash of a file is computed by reading the file in binary chunks
+    and updating a hashlib.sha256 digest, returning the hex digest string.
+  must_contain:
+    - "sha256"
+    - "hashlib"
+  tags: [symbol-lookup]
+
+- id: fail-001
+  collection: docs
+  query: "kubernetes deployment yaml for a statefulset with persistent volumes"
+  query_kind: failure
+  difficulty: hard
+  length: long
+  expected_files: []
+  expected_answer: |
+    This query is completely irrelevant to the agent-engineering-toolkit.
+    A correctly tuned RAG system should return no results or very low confidence
+    scores for this query.
+  must_contain: []
+  tags: [negative-case, should-miss]

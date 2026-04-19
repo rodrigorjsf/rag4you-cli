@@ -66,3 +66,11 @@ Append-only record of all wiki operations.
 - `ruff-linter.md` — Sources field, knowledge-links
 - `tiktoken.md` — Sources field, knowledge-links
 **Purpose**: Ensure all wiki pages pass the lint checklist in `wiki/CLAUDE.md` and provide a navigable knowledge graph via `[[knowledge-links]]`.
+
+## 2026-04-19 — SP0 Phase 1 implementation — update planned markers
+
+**Source**: Phase 1 implementation (bench/ package)
+**Operation**: Updated `ir-evaluation-benchmarking.md` to reflect Phase 1 deliverables — `bench/metrics.py` and `bench/tests/` are now implemented (48 tests green).
+**Pages modified**:
+- `ir-evaluation-benchmarking.md` — removed "(planned, not yet implemented)" from `bench/metrics.py` reference in §1.3; updated `bench/tests/` reference in §3.5 to reflect 48 passing tests; bumped Last updated to 2026-04-19
+**Purpose**: Keep wiki in sync with implemented Phase 1 artifacts per CLAUDE.md convention.

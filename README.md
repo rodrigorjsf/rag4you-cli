@@ -1,6 +1,6 @@
 # rag4you-cli
 
-`rag4you-cli` is a planned, fully local, configurable RAG framework for codebases, documentation, and reference libraries. The repository currently contains the roadmap and the first implementation spec. The implementation itself has not started yet.
+`rag4you-cli` is a fully-local, configurable RAG framework for codebases, documentation, and reference libraries. SP0 — the baseline benchmark harness — is now in active development.
 
 <img align="center" src="/rag4you-header.png" alt="rag4you-cli header">
 
@@ -8,41 +8,91 @@
 
 The work is organized into five sub-projects:
 
-- [ ] **SP0** — Benchmark the current toolkit RAG and publish the first reproducible report
+- [x] **SP0 (in progress)** — Benchmark the current toolkit RAG and publish the first reproducible report (`bench/` package)
 - [ ] **SP1** — Build the configurable RAG core
 - [ ] **SP2** — Publish the model catalog and decision matrix
 - [ ] **SP3** — Build the `npx` wizard CLI
 - [ ] **SP4** — Build the dynamic MCP server
 
-Current status: `docs/ROADMAP.md` is in place, and `docs/specs/sp0-baseline-bench.md` is drafted.
+Full plan: `docs/ROADMAP.md`. Benchmark spec: `docs/specs/sp0-baseline-bench.md`.
 
 ## 💻 Prerequisites
 
-This repository is still in the planning phase. Before you start, read these documents:
+- **Python ≥ 3.11**
+- **[uv](https://docs.astral.sh/uv/)** — package manager (install via `curl -LsSf https://astral.sh/uv/install.sh | sh`)
+- Linux or macOS (WSL2 supported); Windows untested
 
-- `docs/ROADMAP.md`
-- `docs/specs/sp0-baseline-bench.md`
-- `CONTRIBUTING.md`
-
-Runtime prerequisites, supported platforms, and implementation dependencies will be documented when the first deliverable lands.
+Optional, for LLM-grade judging:
+- `ANTHROPIC_API_KEY` — Claude API (Haiku default, cheapest option)
+- `OPENAI_API_KEY` — OpenAI API (gpt-4o-mini default)
+- [Ollama](https://ollama.ai/) — fully local LLM judge (pull `qwen2.5:7b-instruct`)
 
 ## 🚀 Installing rag4you CLI
 
-There is nothing to install yet. The CLI package, Python packages, and supporting tooling described in the roadmap are planned work, not published artifacts.
+```bash
+git clone https://github.com/your-org/rag4you-cli
+cd rag4you-cli
+uv sync                   # installs all deps + bench package in dev mode
+uv sync --extra all-judges  # also installs anthropic + openai + httpx
+```
 
-## ☕ Using rag4you CLI
+## ☕ Using rag4you CLI — bench (SP0)
 
-There is no runnable CLI yet. For now, use this repository as the source of truth for the planned scope and delivery order:
+Run the benchmark against an existing toolkit RAG:
 
-- `docs/ROADMAP.md` for the full project plan
-- `docs/specs/sp0-baseline-bench.md` for the first implementation target
-- `CONTRIBUTING.md` for the contribution workflow
+```bash
+# default: cross-encoder judge (zero cost, fully local)
+uv run python -m bench run --target ~/Workspace/agent-engineering-toolkit
+
+# with Claude Haiku judge (rigorous coverage scores, ~$0.20/run)
+export ANTHROPIC_API_KEY=sk-...
+uv run python -m bench run --target ~/path/to/rag-toolkit --judge claude
+
+# resume an interrupted run
+uv run python -m bench resume <run-id>
+
+# check run progress
+uv run python -m bench status
+
+# re-render report from existing data
+uv run python -m bench report <run-id>
+
+# Portuguese CLI messages
+uv run python -m bench run --target ~/path/to/rag-toolkit --lang pt
+```
+
+Report is written to `reports/<date>-<run-id>/REPORT.md`.
 
 ## Development setup
 
-A development setup is not available yet because the codebase has not entered implementation. This section will document the actual setup, dependencies, and test commands once SP0 begins.
+```bash
+uv sync --group dev          # install dev deps (pytest, ruff)
+uv run pytest                # run all tests
+uv run ruff check bench/     # lint
+uv run ruff format bench/    # format
+```
 
-Repository guidance for AI-assisted sessions lives in `CLAUDE.md`, `.claude/rules/`, `.github/copilot-instructions.md`, and `.github/instructions/`.
+**SP0 package layout:**
+
+```
+bench/
+├── cli.py           # argparse: run | resume | status | report | retry-failed
+├── config.py        # BenchConfig (Pydantic)
+├── metrics.py       # pure functions: precision@k, MRR, coverage, token economy
+├── i18n.py          # locale loader: t("dotted.key", **vars) → str
+├── locales/
+│   ├── en.yaml      # default locale
+│   └── pt.yaml      # Portuguese
+├── golden/
+│   ├── schema.py    # GoldenQuery (Pydantic)
+│   └── dataset.yaml # 20 hand-curated queries
+├── judges/          # cross-encoder (default), claude, openai, ollama
+├── checkpoint.py    # resume-safe state machine
+├── persistence.py   # atomic JSONL + atomic JSON
+├── target.py        # subprocess bridge to toolkit RAG
+├── sweep.py         # (config × query × top_k) sweep orchestrator
+└── report.py        # Jinja2 Markdown renderer
+```
 
 ## 📫 Contributing to rag4you CLI
 
@@ -53,8 +103,6 @@ This project accepts contributions through GitHub pull requests. Follow the proc
 3. Commit your changes.
 4. Push the branch.
 5. Open a pull request.
-
-At this stage, roadmap, spec, and documentation improvements are the most useful contribution types.
 
 ## 😄 Join the contributors
 

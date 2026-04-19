@@ -15,7 +15,7 @@
 - Use the `wiki` to guide you throught documentations and project specifications.
 - Before implementing a feature, consult `wiki/knowledge/index.md` for relevant research pages. When implementation changes invalidate wiki content, update the affected knowledge pages in the same task.
 - YOU MUST update the `README.md` file whenever you add, remove, or significantly change project functionality, file structures, or environment variables following the `docs/templates/readme-template.md`.
-- After completing any major task or PR, review README.md to ensure it reflects current project state.
+- After completing any major task or PR, review README.md to ensure it reflects current project state. Reflect on "What did I learn from this task that could be relevant and helpful in future tasks?", and update the `wiki` in a "Learnings" section with the consolidated learnings and also the summary in `Applied Learning`.
 
 ## Advisor
 

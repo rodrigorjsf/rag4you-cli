@@ -1,0 +1,64 @@
+cli:
+  run:
+    starting: "Starting bench run {run_id}..."
+    cost_estimate: "Estimated cost: ~${cost} ({n_calls} calls × ~{avg_tokens} tokens avg)"
+    cost_estimate_free: "Estimated cost: $0.00 (cross-encoder runs locally, no API calls)"
+    cost_confirm: "Continue? [Y/n]"
+    aborted: "Run aborted by user."
+    plan: "Run plan: {n_configs} configs × {n_queries} queries × {n_top_k} top_k = {n_units} retrievals"
+    judge_info: "Judge: {judge_type} ({judge_model})"
+    estimate_time: "Estimated time: ~{minutes} min"
+    complete: "Run {run_id} complete. Report at {report_path}"
+  resume:
+    found_units: "Resuming run {run_id}: {done}/{total} work units already complete."
+    corpus_drift: "Corpus has changed since the run was created. Use --allow-corpus-drift to override."
+    no_run: "No run found with id: {run_id}"
+    resuming: "Resuming from checkpoint: {done}/{total} ({pct}%) complete"
+  status:
+    running: "Run {run_id}: {done}/{total} ({pct}%) — judge={judge}"
+    not_found: "Run not found: {run_id}"
+    no_runs: "No bench runs found in {state_dir}"
+  report:
+    generating: "Generating report for run {run_id}..."
+    saved: "Report saved to {path}"
+  retry_failed:
+    found: "Found {n} failed work units in run {run_id}. Retrying..."
+    none: "No failed work units in run {run_id}."
+  synth:
+    skipped: "Synthetic queries skipped — no LLM available. Install Ollama and pull {model}, or use an LLM judge, to enable the {n}-query synth set."
+    generating: "Generating {n} synthetic queries from corpus..."
+    dropped: "Dropped {n} synthetic queries (source chunk not found in top-10 retrieval)."
+  index:
+    starting: "Indexing config {config_id} ({current}/{total})..."
+    complete: "Indexed {config_id} in {elapsed}s"
+    cached: "Config {config_id} already indexed, skipping"
+  query:
+    progress: "Querying: {done}/{total} work units complete ({pct}%)"
+  judge:
+    progress: "Judging: {done}/{total} judgments complete ({pct}%)"
+    cache_hit: "Judge cache: {n} work units already judged, skipping API calls"
+  sanity:
+    fail: "Sanity check failed: RAG or bench is broken — not measuring anything useful. Aborting."
+    pass: "Sanity check passed."
+errors:
+  judge_api_failed: "Judge call failed after {attempts} attempts: {error}"
+  index_failed: "Indexing config {config_id} failed: {error}"
+  search_failed: "Search failed for query {query_id} config {config_id}: {error}"
+  lock_held: "Another bench process is running for run {run_id}. Remove the lock file to force: {lock_path}"
+  corpus_hash_mismatch: "Corpus hash mismatch. Run was created with different files. Use --allow-corpus-drift to override."
+  model_not_supported: "Model {model} is not supported by fastembed. This sweep config will be skipped."
+  ollama_unreachable: "Ollama not reachable at {url}. Start Ollama or choose a different judge."
+  missing_api_key: "Environment variable {env_var} is not set. Required for {judge_type} judge."
+report:
+  tldr_heading: "TL;DR"
+  recommendations_heading: "Recommendations for SP1 defaults"
+  configs_ranking_heading: "Configs ranking (composite)"
+  heatmaps_heading: "Heatmaps (chunk × model) — coverage score"
+  failure_analysis_heading: "Failure analysis"
+  per_collection_heading: "Per-collection details"
+  limitations_heading: "Limitations of this run"
+  reproducibility_heading: "Reproducibility"
+  judge_approx_note: "Judge: {judge_model} — coverage scores are approximate (~approx) because cross-encoder fallback was used."
+  synth_skipped_note: "Synthetic queries were skipped. Install Ollama and pull {model}, or use an LLM judge, to enable the {n}-query synth set."
+  no_relevant_alert: "⚠️ {pct}% of queries: no relevant chunk in top-{k} → investigate"
+  self_sufficiency: "Self-sufficiency rate: {pct}% (queries where top-{k} already suffices)"

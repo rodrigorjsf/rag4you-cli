@@ -54,3 +54,4 @@ Each SP is bounded. Cross-cutting concerns (i18n, locale parity, English-only co
 ## Status log
 
 - **2026-04-18**: Roadmap established. SP0 spec drafted (`docs/specs/sp0-baseline-bench.md`); awaiting implementation approval.
+- **2026-04-19**: SP0 implementation started. Phase 1 (foundation) complete: `pyproject.toml`, `bench/` package, `bench/i18n.py`, `bench/metrics.py`, `bench/locales/{en,pt}.yaml`, `bench/golden/schema.py`, `bench/tests/test_{i18n,metrics}.py`. 40 tests green. Implementation plan at `docs/specs/sp0-baseline-bench-plan.md`.

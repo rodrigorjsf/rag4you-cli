@@ -207,3 +207,8 @@ marimo/_lsp/
 __marimo__/
 
 original-idea.md
+
+# bench runtime state and outputs
+.bench-state/
+reports/
+!reports/example/
