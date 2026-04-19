@@ -10,6 +10,7 @@
 GraphQLite (source: github.com/colliery-io/graphqlite) adds a full graph database layer to SQLite via a Cypher query language transpiler. It runs on the same SQLite connection as [[sqlite-vec-fts5-hybrid-search|sqlite-vec and FTS5]], enabling a **triple-hybrid RAG architecture** where vector search, keyword search, and graph traversal all operate on the same database file.
 
 This is significant for rag4you-cli because it enables:
+
 - **Multi-hop reasoning** — follow entity relationships across documents
 - **Community-based retrieval** — cluster related entities for topic-level context
 - **Entity importance ranking** — PageRank scores boost authoritative entities
@@ -24,6 +25,7 @@ Cypher Query → Lexer → Parser (Bison GLR) → AST → SQL Generator → SQLi
 ```
 
 This means:
+
 - No separate graph database process
 - All data lives in standard SQLite tables (EAV schema)
 - Full ACID transactions from SQLite
@@ -58,6 +60,7 @@ edge_props_real    (edge_id, key_id, value REAL)
 ### CSR Graph Cache
 
 For algorithm execution, GraphQLite builds a Compressed Sparse Row (CSR) representation in memory:
+
 - O(V + E) space, O(1) neighbor access
 - Must call `gql_load_graph()` before algorithms
 - Must call `gql_reload_graph()` after structural changes
@@ -65,38 +68,39 @@ For algorithm execution, GraphQLite builds a Compressed Sparse Row (CSR) represe
 - Memory formula: ~(20N + 8E) bytes
 
 | Nodes | Edges | CSR Memory |
-|-------|-------|------------|
-| 10K | 50K | ~600KB |
-| 100K | 500K | ~6MB |
-| 1M | 5M | ~60MB |
+| ----- | ----- | ---------- |
+| 10K   | 50K   | ~600KB     |
+| 100K  | 500K  | ~6MB       |
+| 1M    | 5M    | ~60MB      |
 
 ## Performance Benchmarks (from Official PDF)
 
 Measured on single-core MacBook, `:memory:` database (source: graphqlite-full-documentation.md):
 
-| Operation | Typical Latency |
-|-----------|----------------|
-| Extension loading (schema init) | ~5ms (once) |
-| Simple CREATE | 0.5–1ms |
-| Simple MATCH (10 nodes) | 0.5–2ms |
-| MATCH with relationship (100 rels) | 1–5ms |
-| gql_load_graph() 100K nodes | ~50–100ms |
-| PageRank 100K nodes | ~180ms |
-| PageRank 1M nodes | ~38s |
-| Bulk insert (vs Cypher CREATE) | 100–500x faster |
+| Operation                          | Typical Latency |
+| ---------------------------------- | --------------- |
+| Extension loading (schema init)    | ~5ms (once)     |
+| Simple CREATE                      | 0.5–1ms         |
+| Simple MATCH (10 nodes)            | 0.5–2ms         |
+| MATCH with relationship (100 rels) | 1–5ms           |
+| gql_load_graph() 100K nodes        | ~50–100ms       |
+| PageRank 100K nodes                | ~180ms          |
+| PageRank 1M nodes                  | ~38s            |
+| Bulk insert (vs Cypher CREATE)     | 100–500x faster |
 
 ### Scaling Characteristics
 
-| Scale | Behavior | Recommendation |
-|-------|----------|----------------|
-| < 10K nodes | Sub-1ms queries | Cypher CREATE is fine |
-| 10K–100K nodes | Property lookups 5–50ms | Use bulk insert |
-| 100K–1M nodes | Full scan expensive | CSR cache mandatory for algorithms |
-| > 1M nodes | CSR uses 60MB+ | Consider partitioning, pre-compute centrality |
+| Scale          | Behavior                | Recommendation                                |
+| -------------- | ----------------------- | --------------------------------------------- |
+| < 10K nodes    | Sub-1ms queries         | Cypher CREATE is fine                         |
+| 10K–100K nodes | Property lookups 5–50ms | Use bulk insert                               |
+| 100K–1M nodes  | Full scan expensive     | CSR cache mandatory for algorithms            |
+| > 1M nodes     | CSR uses 60MB+          | Consider partitioning, pre-compute centrality |
 
 ### GraphRAG vs Vector RAG Accuracy (External Benchmarks)
 
 Recent independent benchmarks (Diffbot/FalkorDB 2025) show:
+
 - **GraphRAG**: >90% accuracy on schema-bound/multi-hop queries
 - **Vector RAG**: 0% accuracy on schema-bound queries (cannot follow relationships)
 - **Hybrid (vector + FTS)**: ~40% improvement over vector-only on mixed workloads
@@ -104,15 +108,15 @@ Recent independent benchmarks (Diffbot/FalkorDB 2025) show:
 
 ## Graph Algorithms (18 Built-in)
 
-| Category | Algorithms | RAG Relevance |
-|----------|-----------|---------------|
-| Centrality | PageRank, Degree, Betweenness, Closeness, Eigenvector | Entity importance ranking |
-| Community | Louvain, Leiden, Label Propagation | Topic clustering |
-| Components | Weakly/Strongly Connected | Document grouping |
-| Pathfinding | Dijkstra, A*, All-Pairs | Multi-hop reasoning |
-| Traversal | BFS, DFS | Relationship exploration |
-| Similarity | Node Similarity, KNN | Entity deduplication |
-| Clustering | Triangle Count | Local structure analysis |
+| Category    | Algorithms                                            | RAG Relevance             |
+| ----------- | ----------------------------------------------------- | ------------------------- |
+| Centrality  | PageRank, Degree, Betweenness, Closeness, Eigenvector | Entity importance ranking |
+| Community   | Louvain, Leiden, Label Propagation                    | Topic clustering          |
+| Components  | Weakly/Strongly Connected                             | Document grouping         |
+| Pathfinding | Dijkstra, A*, All-Pairs                               | Multi-hop reasoning       |
+| Traversal   | BFS, DFS                                              | Relationship exploration  |
+| Similarity  | Node Similarity, KNN                                  | Entity deduplication      |
+| Clustering  | Triangle Count                                        | Local structure analysis  |
 
 ### Key Algorithms for RAG
 
@@ -291,6 +295,7 @@ For maximum efficiency, combine [[turboquant-vector-quantization|TurboQuant]] co
 4. **RRF fusion** combines all three retrieval signals
 
 This combination addresses different failure modes:
+
 - Vector search fails on: exact names, acronyms, rare terms → FTS5 covers
 - Keyword search fails on: paraphrases, semantic similarity → Vector covers
 - Both fail on: multi-hop reasoning, implicit connections → Graph covers
@@ -340,12 +345,12 @@ g.shortest_path(source_id, target_id)
 
 ## Installation Options
 
-| Method | Command | Notes |
-|--------|---------|-------|
-| Standard | `pip install graphqlite` | macOS, Linux, Windows |
-| With Leiden | `pip install graphqlite[leiden]` | Requires graspologic |
-| With rustworkx | `pip install graphqlite[rustworkx]` | Graph export support |
-| Rust | `cargo add graphqlite` | All platforms |
+| Method         | Command                             | Notes                 |
+| -------------- | ----------------------------------- | --------------------- |
+| Standard       | `pip install graphqlite`            | macOS, Linux, Windows |
+| With Leiden    | `pip install graphqlite[leiden]`    | Requires graspologic  |
+| With rustworkx | `pip install graphqlite[rustworkx]` | Graph export support  |
+| Rust           | `cargo add graphqlite`              | All platforms         |
 
 ## Related pages
 

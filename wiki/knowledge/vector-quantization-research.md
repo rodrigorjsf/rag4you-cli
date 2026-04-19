@@ -1,7 +1,7 @@
 # Vector Quantization for Embedding Storage and ANN Search
 
 **Summary**: Research compendium on modern vector quantization (VQ) methods — TurboQuant, QJL, and PolarQuant — from Google Research. Covers how random-rotation-based quantizers achieve near-optimal distortion at 2.5–3.5 bits/coordinate, their applicability to embedding vector storage in RAG systems, and the tradeoffs against product quantization (PQ) for nearest-neighbor retrieval.
-**Sources**: docs/raw/turboquant/turbo-quant.pdf, docs/raw/turboquant/1-bit-quantized.pdf, docs/raw/turboquant/polar-quant.pdf
+**Sources**: docs/research/turboquant/turbo-quant.md, docs/research/turboquant/1-bit-quantized.md, docs/research/turboquant/polar-quant.md
 **Last updated**: 2026-04-19
 
 ---
@@ -10,10 +10,10 @@
 
 1. [Context and Motivation for RAG Systems](#1-context-and-motivation-for-rag-systems)
 2. [QJL — 1-Bit Quantized JL Transform](#2-qjl--1-bit-quantized-jl-transform)
-3. [TurboQuant — Near-Optimal VQ at Any Bit-Width](#3-turboQuant--near-optimal-vq-at-any-bit-width)
+3. [TurboQuant — Near-Optimal VQ at Any Bit-Width](#3-turboquant--near-optimal-vq-at-any-bit-width)
 4. [PolarQuant — Polar Coordinate Quantization](#4-polarquant--polar-coordinate-quantization)
 5. [Applicability Analysis: Embedding Storage in rag4you-cli](#5-applicability-analysis-embedding-storage-in-rag4you-cli)
-6. [ANN Search: TurboQuant vs Product Quantization](#6-ann-search-turboQuant-vs-product-quantization)
+6. [ANN Search: TurboQuant vs Product Quantization](#6-ann-search-turboquant-vs-product-quantization)
 7. [Implementation Paths](#7-implementation-paths)
 8. [Summary Table](#8-summary-table)
 
@@ -40,7 +40,7 @@ See [[sqlite-vec-fts5-hybrid-search]] for current storage architecture and [[emb
 
 **Paper**: "QJL: 1-Bit Quantized JL Transform for KV Cache Quantization with Zero Overhead"
 **Authors**: Zandieh, Daliri, Han (NYU / Adobe Research / Independent), 2024
-**Code**: https://github.com/amirzandieh/QJL (CUDA kernels available)
+**Code**: <https://github.com/amirzandieh/QJL> (CUDA kernels available)
 (source: 1-bit-quantized.pdf)
 
 ### Core algorithm
@@ -82,16 +82,19 @@ Existing VQ methods either: (a) require slow data-dependent preprocessing (k-mea
 ### Two-stage algorithm
 
 **Stage 1 — MSE-optimal quantizer (TurboQuant_mse):**
+
 1. Apply random rotation **Π** to input vector → each coordinate independently follows Beta(d/2−1, d/2−1) distribution (by concentration on hypersphere) (source: turbo-quant.pdf §Lemma 1)
 2. Solve 1-D k-means (Lloyd-Max algorithm) for the Beta distribution at each bit-width — precomputed once per bit-width
 3. Quantize each coordinate to nearest centroid independently (exploits near-independence of rotated coordinates in high dimensions)
 4. Dequantize: lookup centroids → rotate back
 
 **Distortion (unit-norm input):**
+
 - General: D_mse ≤ sqrt(2/3π) · 4^(-b) for any b ≥ 0
 - b=1: 0.36, b=2: 0.117, b=3: 0.03, b=4: 0.009 (source: turbo-quant.pdf §Theorem 1)
 
 **Stage 2 — Inner product optimizer (TurboQuant_prod):**
+
 - MSE quantizer introduces bias for inner product estimation
 - Fix: apply TurboQuant_mse at (b-1) bits → compute residual **r** = **x** - dequant(**x**) → apply QJL on residual at 1 bit
 - Result: unbiased inner product estimator at bit-width b, with distortion proportional to ‖residual‖² (source: turbo-quant.pdf §3.2, Theorem 2)
@@ -118,6 +121,7 @@ TurboQuant_mse is within factor sqrt(2/3π) ≈ 2.7 of the information-theoretic
 ### Core insight
 
 Quantize angles in polar coordinates rather than Cartesian coordinates. After random preconditioning:
+
 - Cartesian coordinates are difficult to quantize (outliers, non-uniform distribution)
 - Polar angles concentrate tightly around π/4 with an analytically computable distribution
 - No explicit normalization (zero point / scale) needed per block
@@ -149,17 +153,18 @@ Level 1 angles (range [0, 2π)): 4 bits; levels 2+: 2 bits each. For d=128 (Llam
 
 These methods quantize any high-dimensional float32 vector while preserving inner product / cosine similarity. This maps directly to quantizing stored embedding vectors in sqlite-vec before writing them to the database.
 
-| Dimension | float32 bytes | 3-bit bytes | Compression |
-|-----------|-------------|-------------|-------------|
-| BGE-small 384-d | 1,536 B | ~144 B | 10.7× |
-| BGE-base / Jina 768-d | 3,072 B | ~288 B | 10.7× |
-| BGE-large 1,024-d | 4,096 B | ~384 B | 10.7× |
+| Dimension             | float32 bytes | 3-bit bytes | Compression |
+| --------------------- | ------------- | ----------- | ----------- |
+| BGE-small 384-d       | 1,536 B       | ~144 B      | 10.7×       |
+| BGE-base / Jina 768-d | 3,072 B       | ~288 B      | 10.7×       |
+| BGE-large 1,024-d     | 4,096 B       | ~384 B      | 10.7×       |
 
 The agent-engineering-toolkit indexes ~247 files. At 512-token chunks with ~50% overlap, corpus ≈ 1,000–5,000 chunks per collection. Compressed storage savings: modest at this scale (~5–50 MB saved). More impactful at larger corpora (SP1 target).
 
 ### Critical constraint: sqlite-vec compatibility
 
 sqlite-vec stores vectors as native float32 blobs; its ANN search uses float32 cosine/dot-product operations. Quantized integer vectors would require:
+
 - Custom dequantization before passing to sqlite-vec (negating storage speedup in query path), OR
 - A separate quantized index layer alongside sqlite-vec (double storage during transition), OR
 - Migrating from sqlite-vec to a quantization-aware store (out of scope for SP0/SP1)
@@ -169,6 +174,7 @@ sqlite-vec stores vectors as native float32 blobs; its ANN search uses float32 c
 ### Why SP2 and beyond, not SP0
 
 SP0 measures the current toolkit RAG as a black box. The quantization papers are relevant for SP1 (new core architecture) and SP2 (model + storage tier decisions), specifically:
+
 - Whether to store embeddings at float32, float16, or quantized integer
 - Whether to use TurboQuant-style online quantization for large-corpus deployments
 - Storage tier tradeoffs in the decision matrix
@@ -181,21 +187,21 @@ This is the most directly actionable finding for rag4you-cli. TurboQuant was ben
 
 ### Recall comparison (recall@1@k, k=1..64)
 
-| Method | d=200 (GloVe) | d=1536 (OpenAI) | d=3072 (OpenAI) |
-|--------|--------------|----------------|----------------|
-| PQ (2-bit) | competitive | lower | lower |
-| RabitQ (2-bit) | lower | lower | lower |
-| TurboQuant (2-bit) | best | best | best |
-| TurboQuant (4-bit) | best | best | best |
+| Method             | d=200 (GloVe) | d=1536 (OpenAI) | d=3072 (OpenAI) |
+| ------------------ | ------------- | --------------- | --------------- |
+| PQ (2-bit)         | competitive   | lower           | lower           |
+| RabitQ (2-bit)     | lower         | lower           | lower           |
+| TurboQuant (2-bit) | best          | best            | best            |
+| TurboQuant (4-bit) | best          | best            | best            |
 
 TurboQuant consistently outperforms data-dependent PQ even though PQ has the unfair advantage of training on the same dataset. (source: turbo-quant.pdf §4.4, Figure 5)
 
 ### Indexing time comparison (4-bit, seconds)
 
-| Method | d=200 | d=1536 | d=3072 |
-|--------|-------|--------|--------|
-| PQ | 37s | 240s | 494s |
-| RabitQ | 597s | 2,268s | 3,957s |
+| Method         | d=200       | d=1536      | d=3072      |
+| -------------- | ----------- | ----------- | ----------- |
+| PQ             | 37s         | 240s        | 494s        |
+| RabitQ         | 597s        | 2,268s      | 3,957s      |
 | **TurboQuant** | **0.0007s** | **0.0013s** | **0.0021s** |
 
 TurboQuant indexing is essentially zero (random rotation + codebook lookup — no training phase). (source: turbo-quant.pdf §Table 2)
@@ -209,6 +215,7 @@ TurboQuant indexing is essentially zero (random rotation + codebook lookup — n
 ### Path A: Post-embedding quantization layer (TurboQuant_prod)
 
 After fastembed generates float32 embeddings, apply TurboQuant_prod before sqlite-vec storage:
+
 - Compute: random rotation **Π** (precomputed per collection) → Lloyd-Max quantize per coordinate → QJL residual
 - Store: integer indices + 1-bit residual + ‖x‖₂ scalar
 - Query: dequantize at search time → pass to sqlite-vec
@@ -218,6 +225,7 @@ After fastembed generates float32 embeddings, apply TurboQuant_prod before sqlit
 ### Path B: QJL-based asymmetric inner product (QJL)
 
 Store `sign(S·embedding)` as binary vectors; query with `S·query_embedding` (unquantized):
+
 - Inner product: `ProdQJL(q, k) = sqrt(π/2) · ‖k‖₂/m · <Sq, sign(Sk)>`
 - Pros: unbiased, zero overhead, open-source CUDA kernels
 - Cons: requires custom sqlite-vec extension or bypass; float32 retrieval still needed for hybrid RRF
@@ -229,6 +237,7 @@ Full float32 for sqlite-vec retrieval (top-K candidates), then re-rank using qua
 ### Recommended near-term action
 
 For SP0/SP1: **no integration**. Use as research context for SP2 model tier design:
+
 - Include "quantized storage" as an explicit tier option in the SP2 decision matrix
 - Reference TurboQuant ANN recall results when comparing embedding model sizes (small 384-d quantized vs medium 768-d unquantized)
 - Note QJL open-source availability for potential SP1 optional integration
@@ -237,13 +246,13 @@ For SP0/SP1: **no integration**. Use as research context for SP2 model tier desi
 
 ## 8. Summary Table
 
-| Method | Bit-width | Distortion type | Unbiased IP? | Indexing cost | Open source | Notes |
-|--------|-----------|----------------|-------------|--------------|-------------|-------|
-| **QJL** | 1-bit (3-bit combined) | Inner product | ✓ Yes | Zero | ✓ CUDA kernel | Foundation for TurboQuant_prod |
-| **TurboQuant_mse** | Any b | MSE | ✗ Biased at low b | Zero | ✗ | Within 2.7× of Shannon bound |
-| **TurboQuant_prod** | Any b | Inner product | ✓ Yes | Zero | ✗ | MSE(b-1) + QJL residual |
-| **PolarQuant** | ~3.875-bit | MSE + angle | Approximate | ~11s prefill | PyTorch | Best long-context KV results |
-| **PQ (baseline)** | 2–4-bit | MSE | ✗ | Minutes–hours | ✓ faiss | Data-dependent; worse ANN recall |
+| Method              | Bit-width              | Distortion type | Unbiased IP?      | Indexing cost | Open source   | Notes                            |
+| ------------------- | ---------------------- | --------------- | ----------------- | ------------- | ------------- | -------------------------------- |
+| **QJL**             | 1-bit (3-bit combined) | Inner product   | ✓ Yes             | Zero          | ✓ CUDA kernel | Foundation for TurboQuant_prod   |
+| **TurboQuant_mse**  | Any b                  | MSE             | ✗ Biased at low b | Zero          | ✗             | Within 2.7× of Shannon bound     |
+| **TurboQuant_prod** | Any b                  | Inner product   | ✓ Yes             | Zero          | ✗             | MSE(b-1) + QJL residual          |
+| **PolarQuant**      | ~3.875-bit             | MSE + angle     | Approximate       | ~11s prefill  | PyTorch       | Best long-context KV results     |
+| **PQ (baseline)**   | 2–4-bit                | MSE             | ✗                 | Minutes–hours | ✓ faiss       | Data-dependent; worse ANN recall |
 
 ---
 

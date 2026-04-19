@@ -1,7 +1,7 @@
 # tiktoken — Token Counting Library
 
 **Summary**: tiktoken is OpenAI's fast BPE tokenizer library for Python (written in Rust). It provides token counting for OpenAI models. The rag4you-cli project uses it for token economy metrics in SP0 benchmarks and for chunk size calculations.
-**Sources**: `docs/references/toolchain/bibliography.md`, https://github.com/openai/tiktoken, https://pypi.org/project/tiktoken/, https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
+**Sources**: `docs/references/toolchain/bibliography.md`, <https://github.com/openai/tiktoken>, <https://pypi.org/project/tiktoken/>, <https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken>
 **Last updated**: 2025-07-22
 ---
 
@@ -33,12 +33,12 @@ enc = tiktoken.encoding_for_model("gpt-4o")
 
 ### Available encodings
 
-| Encoding | Models |
-|---|---|
-| `o200k_base` | GPT-4o, GPT-4o-mini |
-| `cl100k_base` | GPT-4, GPT-3.5-turbo, text-embedding-ada-002, text-embedding-3-small/large |
-| `p50k_base` | Codex models |
-| `r50k_base` / `gpt2` | GPT-3 |
+| Encoding             | Models                                                                     |
+| -------------------- | -------------------------------------------------------------------------- |
+| `o200k_base`         | GPT-4o, GPT-4o-mini                                                        |
+| `cl100k_base`        | GPT-4, GPT-3.5-turbo, text-embedding-ada-002, text-embedding-3-small/large |
+| `p50k_base`          | Codex models                                                               |
+| `r50k_base` / `gpt2` | GPT-3                                                                      |
 
 ## Token counting patterns
 
@@ -116,6 +116,7 @@ tiktoken is 3-6x faster than comparable tokenizers (like HuggingFace's `tokenize
 ## What is BPE
 
 Byte Pair Encoding (BPE) converts text to tokens:
+
 - **Reversible and lossless** — tokens decode back to original text
 - **Works on arbitrary text** — handles any input
 - **Compresses text** — average ~4 bytes per token

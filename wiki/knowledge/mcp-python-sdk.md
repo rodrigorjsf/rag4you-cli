@@ -1,7 +1,7 @@
 # MCP Python SDK
 
 **Summary**: The official Python SDK for building MCP servers and clients. Provides FastMCP (high-level, decorator-based API) and a low-level server API. Uses `uv` as the recommended package manager and Pydantic for structured output.
-**Sources**: https://github.com/modelcontextprotocol/python-sdk, https://modelcontextprotocol.io/quickstart/server
+**Sources**: <https://github.com/modelcontextprotocol/python-sdk>, <https://modelcontextprotocol.io/quickstart/server>
 **Last updated**: 2025-07-22
 ---
 
@@ -68,6 +68,7 @@ def get_weather(city: str) -> WeatherData:
 ```
 
 Supported structured return types:
+
 - **Pydantic BaseModel** (recommended for rich schemas)
 - **TypedDict**
 - **Dataclasses** and classes with type hints
@@ -123,6 +124,7 @@ async def long_task(name: str, ctx: Context[ServerSession, None]) -> str:
 ```
 
 Context provides:
+
 - `ctx.request_id` — unique request ID
 - `ctx.debug()`, `ctx.info()`, `ctx.warning()`, `ctx.error()` — logging
 - `ctx.report_progress()` — progress reporting
@@ -235,6 +237,7 @@ mcp = FastMCP(
 ## Relevance to rag4you-cli
 
 SP4 will use FastMCP (see [[mcp-protocol]]) to build the dynamic MCP server:
+
 - One tool per RAG collection, derived from active config
 - Pydantic models for structured tool input/output schemas
 - Lifespan for database/index initialization

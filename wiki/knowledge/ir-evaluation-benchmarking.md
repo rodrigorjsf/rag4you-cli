@@ -8,29 +8,82 @@
 
 ## Table of Contents
 
-1. [Classical IR Evaluation Metrics](#1-classical-ir-evaluation-metrics)
-   - 1.1 [Textbook Foundation — Manning, Raghavan, Schütze](#11-textbook-foundation--manning-raghavan-schütze)
-   - 1.2 [TREC Evaluation Methodology](#12-trec-evaluation-methodology)
-   - 1.3 [Metric Definitions and Formulas](#13-metric-definitions-and-formulas)
-2. [RAG-Specific Evaluation](#2-rag-specific-evaluation)
-   - 2.1 [RAGAS Framework](#21-ragas-framework)
-   - 2.2 [ARES — Automated RAG Evaluation](#22-ares--automated-rag-evaluation)
-   - 2.3 [RAG Evaluation Survey — Yu et al.](#23-rag-evaluation-survey--yu-et-al)
-3. [Benchmarking Best Practices](#3-benchmarking-best-practices)
-   - 3.1 [Golden Set Construction](#31-golden-set-construction)
-   - 3.2 [Synthetic Query Generation](#32-synthetic-query-generation)
-   - 3.3 [Cross-Encoder vs LLM-as-Judge](#33-cross-encoder-vs-llm-as-judge)
-   - 3.4 [The LLM-as-a-Judge Paper](#34-the-llm-as-a-judge-paper)
-   - 3.5 [Reproducibility in IR Experiments](#35-reproducibility-in-ir-experiments)
-4. [Checkpoint and Resume Patterns](#4-checkpoint-and-resume-patterns)
-   - 4.1 [POSIX Atomic Write Guarantees](#41-posix-atomic-write-guarantees)
-   - 4.2 [JSONL Append Pattern](#42-jsonl-append-pattern)
-   - 4.3 [State Machine for Evaluation Pipelines](#43-state-machine-for-evaluation-pipelines)
-5. [Token Economy in RAG](#5-token-economy-in-rag)
-   - 5.1 [Context Window Utilization](#51-context-window-utilization)
-   - 5.2 [Token Counting Methodologies](#52-token-counting-methodologies)
-   - 5.3 [Cost-Performance Tradeoffs](#53-cost-performance-tradeoffs)
-6. [Quick Reference — Source Index](#6-quick-reference--source-index)
+- [IR Evaluation Metrics \& RAG Benchmarking — Research Reference](#ir-evaluation-metrics--rag-benchmarking--research-reference)
+  - [Table of Contents](#table-of-contents)
+  - [1. Classical IR Evaluation Metrics](#1-classical-ir-evaluation-metrics)
+    - [1.1 Textbook Foundation — Manning, Raghavan, Schütze](#11-textbook-foundation--manning-raghavan-schütze)
+      - [Key Formulas (from §8.3)](#key-formulas-from-83)
+    - [1.2 TREC Evaluation Methodology](#12-trec-evaluation-methodology)
+      - [Core Methodology](#core-methodology)
+      - [Key Reference Papers](#key-reference-papers)
+      - [trec\_eval Metrics Supported](#trec_eval-metrics-supported)
+    - [1.3 Metric Definitions and Formulas](#13-metric-definitions-and-formulas)
+      - [Precision@k](#precisionk)
+      - [Recall@k](#recallk)
+      - [F1@k](#f1k)
+      - [Mean Reciprocal Rank (MRR)](#mean-reciprocal-rank-mrr)
+      - [Hit Rate@k](#hit-ratek)
+      - [Coverage Score](#coverage-score)
+      - [Redundancy](#redundancy)
+      - [Token-to-Coverage Ratio](#token-to-coverage-ratio)
+      - [Self-Sufficiency Rate](#self-sufficiency-rate)
+      - [System Metrics](#system-metrics)
+  - [2. RAG-Specific Evaluation](#2-rag-specific-evaluation)
+    - [2.1 RAGAS Framework](#21-ragas-framework)
+      - [Core Metrics](#core-metrics)
+      - [Faithfulness Calculation (from official docs)](#faithfulness-calculation-from-official-docs)
+      - [Context Precision (from official docs)](#context-precision-from-official-docs)
+      - [RAGAS Collections API (v0.3+, 2025)](#ragas-collections-api-v03-2025)
+    - [2.2 ARES — Automated RAG Evaluation](#22-ares--automated-rag-evaluation)
+      - [Key Innovation](#key-innovation)
+      - [Three Evaluation Axes](#three-evaluation-axes)
+    - [2.3 RAG Evaluation Survey — Yu et al](#23-rag-evaluation-survey--yu-et-al)
+      - [Unified Evaluation Process (Auepora)](#unified-evaluation-process-auepora)
+      - [Recent Benchmarks Catalogued](#recent-benchmarks-catalogued)
+  - [3. Benchmarking Best Practices](#3-benchmarking-best-practices)
+    - [3.1 Golden Set Construction](#31-golden-set-construction)
+      - [TREC Pooling Methodology](#trec-pooling-methodology)
+      - [SP0 Golden Set Design (20 queries)](#sp0-golden-set-design-20-queries)
+    - [3.2 Synthetic Query Generation](#32-synthetic-query-generation)
+      - [RAGEval — ACL 2025](#rageval--acl-2025)
+      - [BenchmarkQED — Microsoft Research 2025](#benchmarkqed--microsoft-research-2025)
+      - [SP0 Synthetic Query Design (`synth.py` — planned, not yet implemented)](#sp0-synthetic-query-design-synthpy--planned-not-yet-implemented)
+    - [3.3 Cross-Encoder vs LLM-as-Judge](#33-cross-encoder-vs-llm-as-judge)
+      - [Academic Comparison](#academic-comparison)
+    - [3.4 The LLM-as-a-Judge Paper](#34-the-llm-as-a-judge-paper)
+      - [Core Findings](#core-findings)
+      - [MT-Bench Design](#mt-bench-design)
+    - [3.5 Reproducibility in IR Experiments](#35-reproducibility-in-ir-experiments)
+      - [SIGIR Guidelines](#sigir-guidelines)
+      - [Definitions (ACM standard)](#definitions-acm-standard)
+      - [Best Practices for SP0](#best-practices-for-sp0)
+      - [ACM Artifact Badging](#acm-artifact-badging)
+  - [4. Checkpoint and Resume Patterns](#4-checkpoint-and-resume-patterns)
+    - [4.1 POSIX Atomic Write Guarantees](#41-posix-atomic-write-guarantees)
+      - [The Atomic Rename Pattern](#the-atomic-rename-pattern)
+      - [POSIX Guarantees](#posix-guarantees)
+      - [Caveats](#caveats)
+    - [4.2 JSONL Append Pattern](#42-jsonl-append-pattern)
+      - [Why JSONL for Progress Tracking](#why-jsonl-for-progress-tracking)
+      - [Recovery After Crash](#recovery-after-crash)
+    - [4.3 State Machine for Evaluation Pipelines](#43-state-machine-for-evaluation-pipelines)
+      - [State Diagram](#state-diagram)
+      - [State Persistence](#state-persistence)
+      - [Design Principles](#design-principles)
+  - [5. Token Economy in RAG](#5-token-economy-in-rag)
+    - [5.1 Context Window Utilization](#51-context-window-utilization)
+      - [Key Concept](#key-concept)
+      - [SP0 Metrics That Capture CWU](#sp0-metrics-that-capture-cwu)
+    - [5.2 Token Counting Methodologies](#52-token-counting-methodologies)
+      - [Academic Context](#academic-context)
+      - [SP0 Token Metrics (from spec)](#sp0-token-metrics-from-spec)
+      - [Encoding Selection for SP0](#encoding-selection-for-sp0)
+    - [5.3 Cost-Performance Tradeoffs](#53-cost-performance-tradeoffs)
+      - [Academic References](#academic-references)
+      - [Cost Optimization Strategies (from literature)](#cost-optimization-strategies-from-literature)
+      - [SP0's Token Economy Analysis](#sp0s-token-economy-analysis)
+  - [6. Quick Reference — Source Index](#6-quick-reference--source-index)
+  - [Related pages](#related-pages)
 
 ---
 
@@ -46,13 +99,13 @@
 
 This is the standard textbook for IR evaluation. The relevant chapters for SP0 are:
 
-| Chapter | Topic | SP0 Relevance |
-|---------|-------|---------------|
-| **Ch. 8** — Evaluation in Information Retrieval | Precision, recall, F-measure, ranked evaluation | Core metric definitions |
-| **§8.2** — Precision and recall | Set-based measures, contingency table | `precision_at_k()`, `recall_at_k()` |
-| **§8.3** — Evaluation of ranked retrieval results | Precision-recall curves, interpolated precision, MAP, R-precision, NDCG | `mrr()`, `ndcg_at_k()` |
-| **§8.4** — Assessing relevance | Relevance judgments, assessor agreement, pooling | Golden set construction methodology |
-| **§8.5** — A broader perspective | Kappa statistic, assessor variation | Judge calibration |
+| Chapter                                           | Topic                                                                   | SP0 Relevance                       |
+| ------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------- |
+| **Ch. 8** — Evaluation in Information Retrieval   | Precision, recall, F-measure, ranked evaluation                         | Core metric definitions             |
+| **§8.2** — Precision and recall                   | Set-based measures, contingency table                                   | `precision_at_k()`, `recall_at_k()` |
+| **§8.3** — Evaluation of ranked retrieval results | Precision-recall curves, interpolated precision, MAP, R-precision, NDCG | `mrr()`, `ndcg_at_k()`              |
+| **§8.4** — Assessing relevance                    | Relevance judgments, assessor agreement, pooling                        | Golden set construction methodology |
+| **§8.5** — A broader perspective                  | Kappa statistic, assessor variation                                     | Judge calibration                   |
 
 #### Key Formulas (from §8.3)
 
@@ -102,14 +155,14 @@ TREC (Text REtrieval Conference) established the de facto standard for IR evalua
 
 #### trec_eval Metrics Supported
 
-| Metric | Description | SP0 Equivalent |
-|--------|-------------|----------------|
-| `map` | Mean Average Precision | Not in SP0 (binary relevance + small k) |
-| `ndcg_cut.K` | NDCG at rank K | Future consideration |
-| `P.K` | Precision at rank K | `precision_at_k()` |
-| `recall.K` | Recall at rank K | `recall_at_k()` |
-| `recip_rank` | Reciprocal rank of first relevant doc | `mrr()` |
-| `bpref` | Binary preference metric | Not in SP0 |
+| Metric       | Description                           | SP0 Equivalent                          |
+| ------------ | ------------------------------------- | --------------------------------------- |
+| `map`        | Mean Average Precision                | Not in SP0 (binary relevance + small k) |
+| `ndcg_cut.K` | NDCG at rank K                        | Future consideration                    |
+| `P.K`        | Precision at rank K                   | `precision_at_k()`                      |
+| `recall.K`   | Recall at rank K                      | `recall_at_k()`                         |
+| `recip_rank` | Reciprocal rank of first relevant doc | `mrr()`                                 |
+| `bpref`      | Binary preference metric              | Not in SP0                              |
 
 **Practical insight for SP0:** The trec_eval input format (qrels + run files) is a well-established standard. Even though SP0 computes metrics in Python, adopting the qrels format for golden set storage enables future compatibility with trec_eval and community benchmarks.
 
@@ -207,12 +260,12 @@ Self-Sufficiency = fraction of queries where coverage ≥ threshold (e.g., 0.8)
 
 #### System Metrics
 
-| Metric | Unit | Measures |
-|--------|------|----------|
-| Indexing time | seconds | Time to index the full corpus for one configuration |
-| Query latency | ms (p50, p95, p99) | End-to-end retrieval time per query |
-| Peak RSS | MB | Maximum resident memory during indexing/querying |
-| DB size | MB | On-disk size of the vector + FTS database |
+| Metric        | Unit               | Measures                                            |
+| ------------- | ------------------ | --------------------------------------------------- |
+| Indexing time | seconds            | Time to index the full corpus for one configuration |
+| Query latency | ms (p50, p95, p99) | End-to-end retrieval time per query                 |
+| Peak RSS      | MB                 | Maximum resident memory during indexing/querying    |
+| DB size       | MB                 | On-disk size of the vector + FTS database           |
 
 ---
 
@@ -232,14 +285,14 @@ For broader RAG research context including retrieval techniques and chunking str
 
 #### Core Metrics
 
-| Metric | What It Measures | Formula | Requires |
-|--------|-----------------|---------|----------|
-| **Faithfulness** | Are response claims supported by context? | Supported claims / Total claims | LLM judge |
-| **Context Precision** | Are relevant chunks ranked higher? | Mean(Precision@k × vₖ) / Relevant items in top-K | LLM judge + reference |
-| **Context Recall** | Did retrieval find all needed info? | Attributable reference claims / Total reference claims | LLM judge + reference |
-| **Answer Relevancy** | Does the answer address the query? | cos(question, answer) in embedding space | Embedding model |
-| **Context Utilization** | Is retrieved context actually used? | Same as Context Precision but uses response instead of reference | LLM judge |
-| **Noise Sensitivity** | Does irrelevant context hurt the answer? | Empirical degradation measurement | LLM judge |
+| Metric                  | What It Measures                          | Formula                                                          | Requires              |
+| ----------------------- | ----------------------------------------- | ---------------------------------------------------------------- | --------------------- |
+| **Faithfulness**        | Are response claims supported by context? | Supported claims / Total claims                                  | LLM judge             |
+| **Context Precision**   | Are relevant chunks ranked higher?        | Mean(Precision@k × vₖ) / Relevant items in top-K                 | LLM judge + reference |
+| **Context Recall**      | Did retrieval find all needed info?       | Attributable reference claims / Total reference claims           | LLM judge + reference |
+| **Answer Relevancy**    | Does the answer address the query?        | cos(question, answer) in embedding space                         | Embedding model       |
+| **Context Utilization** | Is retrieved context actually used?       | Same as Context Precision but uses response instead of reference | LLM judge             |
+| **Noise Sensitivity**   | Does irrelevant context hurt the answer?  | Empirical degradation measurement                                | LLM judge             |
 
 #### Faithfulness Calculation (from official docs)
 
@@ -258,6 +311,7 @@ Context Precision@K = Σₖ₌₁ᴷ (Precision@k × vₖ) / (Total relevant in 
 Where `vₖ ∈ {0, 1}` is the relevance indicator at rank k. This is a weighted precision that rewards placing relevant chunks earlier in the ranking.
 
 **Key insight:** RAGAS offers both LLM-based and non-LLM-based variants:
+
 - `LLMContextPrecisionWithReference` — uses an LLM to compare chunks against reference answer.
 - `LLMContextPrecisionWithoutReference` — uses an LLM to compare chunks against generated response.
 - `NonLLMContextPrecisionWithReference` — uses Levenshtein distance, no LLM needed.
@@ -294,23 +348,24 @@ The legacy `SingleTurnSample` API is deprecated (removed in v1.0).
 #### Key Innovation
 
 ARES reduces human annotation requirements by:
+
 1. **Synthetic data generation:** Generates synthetic QA pairs to train lightweight LLM judges.
 2. **Fine-tuned judges:** Trains small models to evaluate context relevance, faithfulness, and answer relevance.
 3. **Prediction-Powered Inference (PPI):** Uses a small human-annotated calibration set (≈150 samples) to statistically correct model predictions with confidence intervals.
 
 #### Three Evaluation Axes
 
-| Axis | Description | SP0 Equivalent |
-|------|-------------|----------------|
-| Context relevance | Are retrieved passages relevant to the query? | `precision_at_k()` |
-| Answer faithfulness | Is the answer grounded in retrieved context? | `coverage_score` (partial) |
-| Answer relevance | Does the answer address the question? | Not in SP0 scope (no generation) |
+| Axis                | Description                                   | SP0 Equivalent                   |
+| ------------------- | --------------------------------------------- | -------------------------------- |
+| Context relevance   | Are retrieved passages relevant to the query? | `precision_at_k()`               |
+| Answer faithfulness | Is the answer grounded in retrieved context?  | `coverage_score` (partial)       |
+| Answer relevance    | Does the answer address the question?         | Not in SP0 scope (no generation) |
 
 **SP0 relationship:** ARES's PPI approach is relevant for future work when SP0 needs to calibrate LLM judge scores against human judgments. The synthetic data generation methodology aligns with SP0's `synth.py` component.
 
 ---
 
-### 2.3 RAG Evaluation Survey — Yu et al.
+### 2.3 RAG Evaluation Survey — Yu et al
 
 **Title:** Evaluation of Retrieval-Augmented Generation: A Survey (Auepora)
 **Authors:** Hao Yu et al.
@@ -329,13 +384,13 @@ The survey proposes a three-dimensional evaluation framework:
 
 #### Recent Benchmarks Catalogued
 
-| Benchmark | Year | Venue | Description |
-|-----------|------|-------|-------------|
-| **CRAG** | 2024 | NeurIPS | 4,409 QA pairs across 5 domains, entity popularity stratification |
-| **RAGEval** | 2025 | ACL | Schema-based synthetic dataset generation for diverse RAG scenarios |
-| **MEMERAG** | 2025 | ACL | Multilingual end-to-end meta-evaluation benchmark |
-| **BenchmarkQED** | 2025 | MSR | Automated benchmarking toolkit with AutoQ query synthesis |
-| **Cit-eRAG** | 2026 | WWW | Academic citation prediction RAG benchmark |
+| Benchmark        | Year | Venue   | Description                                                         |
+| ---------------- | ---- | ------- | ------------------------------------------------------------------- |
+| **CRAG**         | 2024 | NeurIPS | 4,409 QA pairs across 5 domains, entity popularity stratification   |
+| **RAGEval**      | 2025 | ACL     | Schema-based synthetic dataset generation for diverse RAG scenarios |
+| **MEMERAG**      | 2025 | ACL     | Multilingual end-to-end meta-evaluation benchmark                   |
+| **BenchmarkQED** | 2025 | MSR     | Automated benchmarking toolkit with AutoQ query synthesis           |
+| **Cit-eRAG**     | 2026 | WWW     | Academic citation prediction RAG benchmark                          |
 
 ---
 
@@ -378,6 +433,7 @@ SP0 adapts TREC methodology for a small, focused benchmark:
 **Code:** <https://github.com/OpenBMB/RAGEval>
 
 **Methodology:**
+
 1. Schema-based generation: Define document schemas specifying entity types, relationships, and facts.
 2. LLM-guided synthesis: An LLM generates synthetic documents following the schema.
 3. Question generation: Generate questions from the synthetic documents with known ground-truth answers.
@@ -389,6 +445,7 @@ SP0 adapts TREC methodology for a small, focused benchmark:
 **URL:** <https://www.microsoft.com/en-us/research/project/benchmarkqed/>
 
 **AutoQ methodology:**
+
 1. Automated query synthesis spanning local-to-global information needs.
 2. Queries are generated to cover different retrieval difficulty levels.
 3. The toolkit enables reproducible, automated benchmarking across RAG configurations.
@@ -412,15 +469,18 @@ SP0's approach aligns with academic best practices:
 **Key paper:** Déjean, H., Clinchant, S., & Formal, T. (2024). "A Thorough Comparison of Cross-Encoders and LLMs for Reranking SPLADE." arXiv:2403.10407. <https://arxiv.org/abs/2403.10407>
 
 **Findings:**
+
 - On in-domain data (MS MARCO): Cross-encoders and LLM rerankers perform comparably.
 - On out-of-domain data (BEIR, LoTTE): Performance diverges significantly depending on task.
 - **Cross-encoders:** 5–10× faster, lower cost, strong default choice for production.
 - **LLM rerankers:** Better reasoning on complex queries, but higher latency and cost.
 
 **Distillation:** Schlatt, F. et al. (2025). "Rank-DistiLLM: Closing the Effectiveness Gap Between Cross-Encoders and LLMs for Passage Re-ranking." ECIR 2025. <https://link.springer.com/chapter/10.1007/978-3-031-88714-7_31>
+
 - Cross-encoders distilled from LLMs achieve the same effectiveness as their teacher LLMs while being 173× faster and 24× more memory efficient.
 
 **SP0 design rationale:** SP0 defaults to cross-encoder (fastembed reranker, retrieval via [[sqlite-vec-fts5-hybrid-search]]) for:
+
 - Zero-cost evaluation (no API keys needed).
 - Fast execution (critical for sweeping 18 configs × 70 queries).
 - Sufficient quality for system-level comparison.
@@ -457,6 +517,7 @@ SP0's approach aligns with academic best practices:
 - Scores on a 1–10 scale with reference answers.
 
 **SP0 relevance:** When using LLM judges for coverage scoring, SP0 should:
+
 - **Mitigate position bias:** Present chunks in random order (not retrieval rank order) to the judge.
 - **Use reference answers:** Ground coverage judgment against the golden set's `expected_answer`.
 - **Cache judge responses:** Store judge verdicts in `judge-cache.jsonl` to avoid re-evaluation after resume.
@@ -471,11 +532,11 @@ SP0's approach aligns with academic best practices:
 
 #### Definitions (ACM standard)
 
-| Term | Definition |
-|------|-----------|
-| **Repeatability** | Same team, same setup → same results |
-| **Reproducibility** | Different team, same artifacts → same results |
-| **Replicability** | Different team, different setup → consistent results |
+| Term                | Definition                                           |
+| ------------------- | ---------------------------------------------------- |
+| **Repeatability**   | Same team, same setup → same results                 |
+| **Reproducibility** | Different team, same artifacts → same results        |
+| **Replicability**   | Different team, different setup → consistent results |
 
 #### Best Practices for SP0
 
@@ -488,6 +549,7 @@ SP0's approach aligns with academic best practices:
 #### ACM Artifact Badging
 
 ACM uses artifact badges to signal reproducibility:
+
 - **Artifacts Available:** Code and data are publicly accessible.
 - **Artifacts Evaluated — Functional:** Code runs and produces claimed results.
 - **Results Reproduced:** An independent team reproduced the results.
@@ -501,6 +563,7 @@ ACM uses artifact badges to signal reproducibility:
 ### 4.1 POSIX Atomic Write Guarantees
 
 **References:**
+
 - POSIX rename(2): <https://man7.org/linux/man-pages/man2/rename.2.html>
 - POSIX fsync(2): <https://man7.org/linux/man-pages/man2/fsync.2.html>
 - Dan Luu, "Files are hard": <https://danluu.com/file-consistency/>
@@ -529,12 +592,12 @@ def atomic_json_write(path: str, data: dict) -> None:
 
 #### POSIX Guarantees
 
-| Operation | Guarantee |
-|-----------|-----------|
-| `rename()` | Atomic on POSIX-compliant filesystems (ext4, XFS, APFS). The destination is either the old file or the new file, never a partial file. |
-| `fsync(fd)` | All data and metadata for the file are flushed to stable storage. After `fsync` + crash, the synced content is guaranteed on disk. |
+| Operation                    | Guarantee                                                                                                                                      |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rename()`                   | Atomic on POSIX-compliant filesystems (ext4, XFS, APFS). The destination is either the old file or the new file, never a partial file.         |
+| `fsync(fd)`                  | All data and metadata for the file are flushed to stable storage. After `fsync` + crash, the synced content is guaranteed on disk.             |
 | `rename()` without `fsync()` | The rename is atomic in terms of file content, but the directory entry may not be durable. After a crash, the old file might still be present. |
-| Cross-directory `rename()` | NOT guaranteed atomic on all filesystems. SP0 must keep `.tmp` and final file in the same directory. |
+| Cross-directory `rename()`   | NOT guaranteed atomic on all filesystems. SP0 must keep `.tmp` and final file in the same directory.                                           |
 
 #### Caveats
 
@@ -563,13 +626,13 @@ def append_jsonl(path: str, record: dict) -> None:
 
 #### Why JSONL for Progress Tracking
 
-| Property | Benefit for SP0 |
-|----------|----------------|
-| Append-only | Never modifies existing data — crash during write loses at most the last line |
+| Property        | Benefit for SP0                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| Append-only     | Never modifies existing data — crash during write loses at most the last line                   |
 | Line-per-record | Each line is a complete JSON object — partial writes produce invalid JSON only on the last line |
-| Easy resume | On resume, read all valid lines and skip the incomplete last line (if any) |
-| Streamable | Can tail the file during a long run to monitor progress |
-| grep-friendly | Can search/filter records with standard tools |
+| Easy resume     | On resume, read all valid lines and skip the incomplete last line (if any)                      |
+| Streamable      | Can tail the file during a long run to monitor progress                                         |
+| grep-friendly   | Can search/filter records with standard tools                                                   |
 
 #### Recovery After Crash
 
@@ -646,18 +709,19 @@ Each state transition is recorded in the manifest:
 #### Key Concept
 
 Context Window Utilization (CWU) measures the effective value gained from tokens in the context window:
+
 - **Too few tokens:** Underutilizes the model; retrieval might miss relevant information.
 - **Too many tokens:** Adds noise, increases cost, and can degrade output quality ("lost in the middle" effect).
 - **Optimal:** CWU is maximized when the context contains only relevant, non-redundant information.
 
 #### SP0 Metrics That Capture CWU
 
-| SP0 Metric | CWU Dimension |
-|------------|---------------|
-| `token_to_coverage_ratio` | Tokens spent per unit of answer coverage (lower is better) |
-| `redundancy` | Wasted tokens from overlapping chunks (lower is better) |
-| `self_sufficiency_rate` | Fraction of queries where context is sufficient (higher is better) |
-| `coverage_score` | How well context covers the expected answer (higher is better) |
+| SP0 Metric                | CWU Dimension                                                      |
+| ------------------------- | ------------------------------------------------------------------ |
+| `token_to_coverage_ratio` | Tokens spent per unit of answer coverage (lower is better)         |
+| `redundancy`              | Wasted tokens from overlapping chunks (lower is better)            |
+| `self_sufficiency_rate`   | Fraction of queries where context is sufficient (higher is better) |
+| `coverage_score`          | How well context covers the expected answer (higher is better)     |
 
 **Practical insight:** SP0's sweep across `top_k ∈ {3, 5, 10}` directly measures the CWU tradeoff — increasing top_k adds more context tokens but may not improve coverage proportionally.
 
@@ -670,6 +734,7 @@ See also: [[tiktoken]] wiki page for API details and [[rag-research-compendium]]
 #### Academic Context
 
 Token counting for RAG evaluation requires:
+
 1. **Consistent encoding:** Use the same tokenizer (encoding) across all measurements.
 2. **Model-specific counting:** Different models use different tokenizers (cl100k_base for GPT-4, o200k_base for GPT-4o).
 3. **Chunk budget awareness:** Count tokens per chunk, not just per query, to measure context window efficiency.
@@ -690,6 +755,7 @@ Token counting for RAG evaluation requires:
 #### Encoding Selection for SP0
 
 SP0 uses `cl100k_base` as the default encoding because:
+
 - It covers GPT-4, GPT-3.5-turbo, and `text-embedding-ada-002`/`text-embedding-3-*`.
 - It provides a reasonable proxy for token counting even when the exact model is not known.
 - The encoding is configurable (not hardcoded) per repo conventions.
@@ -704,6 +770,7 @@ SP0 uses `cl100k_base` as the default encoding because:
 **URL:** <https://arxiv.org/abs/2412.11854>
 
 **Key findings:**
+
 - RAG increases Time-To-First-Token (TTFT) latency due to retrieval overhead.
 - Memory usage can be orders of magnitude higher in large deployments.
 - Grid-search optimization for chunk size and model combinations drastically lowers latency.
@@ -716,17 +783,18 @@ SP0 uses `cl100k_base` as the default encoding because:
 
 #### Cost Optimization Strategies (from literature)
 
-| Strategy | Token Savings | SP0 Relevance |
-|----------|---------------|---------------|
-| **Reranking + fewer chunks** | 50–80% | SP0 measures this via top_k sweep |
-| **Query classification** (skip retrieval) | ~50% for simple queries | Out of SP0 scope |
-| **Context compression** | 30–50% | Future SP1 consideration |
-| **Prompt caching** | Up to 90% for repeated prefixes | Not applicable to SP0 |
-| **Smaller embedding models** | Lower latency, same recall | SP0 measures via model sweep |
+| Strategy                                  | Token Savings                   | SP0 Relevance                     |
+| ----------------------------------------- | ------------------------------- | --------------------------------- |
+| **Reranking + fewer chunks**              | 50–80%                          | SP0 measures this via top_k sweep |
+| **Query classification** (skip retrieval) | ~50% for simple queries         | Out of SP0 scope                  |
+| **Context compression**                   | 30–50%                          | Future SP1 consideration          |
+| **Prompt caching**                        | Up to 90% for repeated prefixes | Not applicable to SP0             |
+| **Smaller embedding models**              | Lower latency, same recall      | SP0 measures via model sweep      |
 
 #### SP0's Token Economy Analysis
 
 SP0's sweep matrix naturally produces the data needed for cost-performance analysis:
+
 - **chunk_size × top_k** determines `context_tokens`.
 - **coverage_score** determines retrieval quality.
 - **token_to_coverage_ratio** is the primary cost-performance metric.
@@ -736,28 +804,28 @@ SP0's sweep matrix naturally produces the data needed for cost-performance analy
 
 ## 6. Quick Reference — Source Index
 
-| # | Source | Type | Year | Topic | URL |
-|---|--------|------|------|-------|-----|
-| 1 | Manning, Raghavan, Schütze — IIR | Textbook | 2008 | IR evaluation metrics | <https://nlp.stanford.edu/IR-book/> |
-| 2 | TREC / trec_eval | Tool + Methodology | 1992– | Standard IR evaluation | <https://trec.nist.gov/> |
-| 3 | Voorhees — Relevance Variations | Paper (SIGIR) | 1998 | Assessor agreement, pooling | <https://dl.acm.org/doi/10.1145/290941.291022> |
-| 4 | Es et al. — RAGAS | Paper + Framework | 2023 | RAG evaluation metrics | <https://arxiv.org/abs/2309.15217> |
-| 5 | RAGAS Official Docs | Documentation | 2025 | Faithfulness, Context Precision, etc. | <https://docs.ragas.io/> |
-| 6 | Saad-Falcon et al. — ARES | Paper (NAACL) | 2024 | Automated RAG evaluation | <https://arxiv.org/abs/2311.09476> |
-| 7 | Yu et al. — RAG Eval Survey | Paper | 2024 | Evaluation survey (Auepora) | <https://arxiv.org/abs/2405.07437> |
-| 8 | Zheng et al. — LLM-as-a-Judge | Paper (NeurIPS) | 2023 | LLM judging methodology | <https://arxiv.org/abs/2306.05685> |
-| 9 | Déjean et al. — Cross-Encoder vs LLM | Paper | 2024 | Reranking comparison | <https://arxiv.org/abs/2403.10407> |
-| 10 | Schlatt et al. — Rank-DistiLLM | Paper (ECIR) | 2025 | Distilled cross-encoders | <https://link.springer.com/chapter/10.1007/978-3-031-88714-7_31> |
-| 11 | Zhu et al. — RAGEval | Paper (ACL) | 2025 | Synthetic dataset generation | <https://aclanthology.org/2025.acl-long.418/> |
-| 12 | BenchmarkQED | Toolkit (MSR) | 2025 | Automated RAG benchmarking | <https://www.microsoft.com/en-us/research/project/benchmarkqed/> |
-| 13 | Juvekar & Purwar — CWU | Paper | 2024 | Context window utilization | <https://arxiv.org/abs/2407.19794> |
-| 14 | Systems Trade-offs in RAG | Paper | 2024 | Latency/memory tradeoffs | <https://arxiv.org/abs/2412.11854> |
-| 15 | Adaptive Context Compression | Paper (EMNLP) | 2025 | Context compression | <https://aclanthology.org/2025.findings-emnlp.1307> |
-| 16 | Ferro & Sanderson — Reproducibility | Paper (SIGIR Forum) | 2018 | IR experiment reproducibility | SIGIR Forum vol. 52 no. 2 |
-| 17 | Sanderson & Zobel — Effort, Sensitivity | Paper (SIGIR) | 2005 | Test collection design | <https://dl.acm.org/doi/10.1145/1076034.1076064> |
-| 18 | POSIX rename(2) | Man page | — | Atomic file rename | <https://man7.org/linux/man-pages/man2/rename.2.html> |
-| 19 | POSIX fsync(2) | Man page | — | File sync guarantees | <https://man7.org/linux/man-pages/man2/fsync.2.html> |
-| 20 | Dan Luu — Files are hard | Blog | 2017 | Crash consistency patterns | <https://danluu.com/file-consistency/> |
+| #   | Source                                  | Type                | Year  | Topic                                 | URL                                                              |
+| --- | --------------------------------------- | ------------------- | ----- | ------------------------------------- | ---------------------------------------------------------------- |
+| 1   | Manning, Raghavan, Schütze — IIR        | Textbook            | 2008  | IR evaluation metrics                 | <https://nlp.stanford.edu/IR-book/>                              |
+| 2   | TREC / trec_eval                        | Tool + Methodology  | 1992– | Standard IR evaluation                | <https://trec.nist.gov/>                                         |
+| 3   | Voorhees — Relevance Variations         | Paper (SIGIR)       | 1998  | Assessor agreement, pooling           | <https://dl.acm.org/doi/10.1145/290941.291022>                   |
+| 4   | Es et al. — RAGAS                       | Paper + Framework   | 2023  | RAG evaluation metrics                | <https://arxiv.org/abs/2309.15217>                               |
+| 5   | RAGAS Official Docs                     | Documentation       | 2025  | Faithfulness, Context Precision, etc. | <https://docs.ragas.io/>                                         |
+| 6   | Saad-Falcon et al. — ARES               | Paper (NAACL)       | 2024  | Automated RAG evaluation              | <https://arxiv.org/abs/2311.09476>                               |
+| 7   | Yu et al. — RAG Eval Survey             | Paper               | 2024  | Evaluation survey (Auepora)           | <https://arxiv.org/abs/2405.07437>                               |
+| 8   | Zheng et al. — LLM-as-a-Judge           | Paper (NeurIPS)     | 2023  | LLM judging methodology               | <https://arxiv.org/abs/2306.05685>                               |
+| 9   | Déjean et al. — Cross-Encoder vs LLM    | Paper               | 2024  | Reranking comparison                  | <https://arxiv.org/abs/2403.10407>                               |
+| 10  | Schlatt et al. — Rank-DistiLLM          | Paper (ECIR)        | 2025  | Distilled cross-encoders              | <https://link.springer.com/chapter/10.1007/978-3-031-88714-7_31> |
+| 11  | Zhu et al. — RAGEval                    | Paper (ACL)         | 2025  | Synthetic dataset generation          | <https://aclanthology.org/2025.acl-long.418/>                    |
+| 12  | BenchmarkQED                            | Toolkit (MSR)       | 2025  | Automated RAG benchmarking            | <https://www.microsoft.com/en-us/research/project/benchmarkqed/> |
+| 13  | Juvekar & Purwar — CWU                  | Paper               | 2024  | Context window utilization            | <https://arxiv.org/abs/2407.19794>                               |
+| 14  | Systems Trade-offs in RAG               | Paper               | 2024  | Latency/memory tradeoffs              | <https://arxiv.org/abs/2412.11854>                               |
+| 15  | Adaptive Context Compression            | Paper (EMNLP)       | 2025  | Context compression                   | <https://aclanthology.org/2025.findings-emnlp.1307>              |
+| 16  | Ferro & Sanderson — Reproducibility     | Paper (SIGIR Forum) | 2018  | IR experiment reproducibility         | SIGIR Forum vol. 52 no. 2                                        |
+| 17  | Sanderson & Zobel — Effort, Sensitivity | Paper (SIGIR)       | 2005  | Test collection design                | <https://dl.acm.org/doi/10.1145/1076034.1076064>                 |
+| 18  | POSIX rename(2)                         | Man page            | —     | Atomic file rename                    | <https://man7.org/linux/man-pages/man2/rename.2.html>            |
+| 19  | POSIX fsync(2)                          | Man page            | —     | File sync guarantees                  | <https://man7.org/linux/man-pages/man2/fsync.2.html>             |
+| 20  | Dan Luu — Files are hard                | Blog                | 2017  | Crash consistency patterns            | <https://danluu.com/file-consistency/>                           |
 
 ---
 

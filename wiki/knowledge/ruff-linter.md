@@ -1,7 +1,7 @@
 # Ruff Linter and Formatter
 
 **Summary**: Ruff is an extremely fast Python linter and formatter written in Rust (by Astral, makers of uv). It replaces Flake8, Black, isort, pyupgrade, and more. The rag4you-cli project uses Ruff for all linting and formatting via `uv run ruff check .` and `uv run ruff format .`.
-**Sources**: `docs/references/toolchain/bibliography.md`, https://docs.astral.sh/ruff/, https://docs.astral.sh/ruff/configuration/, https://docs.astral.sh/ruff/rules/
+**Sources**: `docs/references/toolchain/bibliography.md`, <https://docs.astral.sh/ruff/>, <https://docs.astral.sh/ruff/configuration/>, <https://docs.astral.sh/ruff/rules/>
 **Last updated**: 2025-07-22
 ---
 
@@ -89,19 +89,19 @@ line-ending = "auto"
 
 ## Key rule categories
 
-| Code | Source | Purpose |
-|---|---|---|
-| `F` | Pyflakes | Undefined names, unused imports/variables |
-| `E`/`W` | pycodestyle | Style errors and warnings |
-| `B` | flake8-bugbear | Common bug patterns |
-| `I` | isort | Import sorting |
-| `UP` | pyupgrade | Modernize Python syntax |
-| `S` | flake8-bandit | Security issues |
-| `ANN` | flake8-annotations | Missing type annotations |
-| `RUF` | Ruff-specific | Ruff's own rules |
-| `D` | pydocstyle | Docstring conventions |
-| `ASYNC` | flake8-async | Async best practices |
-| `FAST` | FastAPI | FastAPI-specific checks |
+| Code    | Source             | Purpose                                   |
+| ------- | ------------------ | ----------------------------------------- |
+| `F`     | Pyflakes           | Undefined names, unused imports/variables |
+| `E`/`W` | pycodestyle        | Style errors and warnings                 |
+| `B`     | flake8-bugbear     | Common bug patterns                       |
+| `I`     | isort              | Import sorting                            |
+| `UP`    | pyupgrade          | Modernize Python syntax                   |
+| `S`     | flake8-bandit      | Security issues                           |
+| `ANN`   | flake8-annotations | Missing type annotations                  |
+| `RUF`   | Ruff-specific      | Ruff's own rules                          |
+| `D`     | pydocstyle         | Docstring conventions                     |
+| `ASYNC` | flake8-async       | Async best practices                      |
+| `FAST`  | FastAPI            | FastAPI-specific checks                   |
 
 ## Configuration discovery
 

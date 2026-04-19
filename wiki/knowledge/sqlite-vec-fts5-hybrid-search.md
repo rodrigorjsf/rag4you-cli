@@ -33,16 +33,16 @@ dependencies. It is a successor to `sqlite-vss`.
 
 ### Key Characteristics
 
-| Property | Value |
-|---|---|
-| License | MIT / Apache-2.0 dual |
-| Language | Pure C, no dependencies |
-| Status | Pre-v1 (expect breaking changes) |
-| Sponsor | Mozilla Builders (primary), Fly.io, Turso, SQLite Cloud |
-| Vector types | `float32`, `int8`, `bit` |
-| Search method | Brute-force exhaustive scan (no ANN index yet) |
-| Storage | Shadow tables inside the SQLite database file |
-| Platforms | Linux, macOS, Windows, WASM, Raspberry Pi, mobile |
+| Property      | Value                                                   |
+| ------------- | ------------------------------------------------------- |
+| License       | MIT / Apache-2.0 dual                                   |
+| Language      | Pure C, no dependencies                                 |
+| Status        | Pre-v1 (expect breaking changes)                        |
+| Sponsor       | Mozilla Builders (primary), Fly.io, Turso, SQLite Cloud |
+| Vector types  | `float32`, `int8`, `bit`                                |
+| Search method | Brute-force exhaustive scan (no ANN index yet)          |
+| Storage       | Shadow tables inside the SQLite database file           |
+| Platforms     | Linux, macOS, Windows, WASM, Raspberry Pi, mobile       |
 
 ### Core Principle
 
@@ -72,46 +72,46 @@ limit 20;
 
 ### Constructors
 
-| Function | Description |
-|---|---|
-| `vec_f32(vector)` | Creates float32 vector from BLOB or JSON. Subtype 223. |
+| Function           | Description                                                                     |
+| ------------------ | ------------------------------------------------------------------------------- |
+| `vec_f32(vector)`  | Creates float32 vector from BLOB or JSON. Subtype 223.                          |
 | `vec_int8(vector)` | Creates int8 vector from BLOB or JSON. Elements must be -128..127. Subtype 225. |
-| `vec_bit(vector)` | Creates binary vector from BLOB. 1 byte per 8 elements. Subtype 224. |
+| `vec_bit(vector)`  | Creates binary vector from BLOB. 1 byte per 8 elements. Subtype 224.            |
 
 ### Operations
 
-| Function | Description |
-|---|---|
-| `vec_length(vector)` | Number of elements in the vector |
-| `vec_type(vector)` | Returns `'float32'`, `'int8'`, or `'bit'` |
-| `vec_add(a, b)` | Element-wise addition (float32 and int8 only) |
-| `vec_sub(a, b)` | Element-wise subtraction (float32 and int8 only) |
-| `vec_normalize(vector)` | L2 normalization (float32 only) |
+| Function                        | Description                                       |
+| ------------------------------- | ------------------------------------------------- |
+| `vec_length(vector)`            | Number of elements in the vector                  |
+| `vec_type(vector)`              | Returns `'float32'`, `'int8'`, or `'bit'`         |
+| `vec_add(a, b)`                 | Element-wise addition (float32 and int8 only)     |
+| `vec_sub(a, b)`                 | Element-wise subtraction (float32 and int8 only)  |
+| `vec_normalize(vector)`         | L2 normalization (float32 only)                   |
 | `vec_slice(vector, start, end)` | Extract subset (useful for Matryoshka embeddings) |
-| `vec_to_json(vector)` | Convert vector to JSON text representation |
-| `vec_each(vector)` | Table function to iterate each element |
+| `vec_to_json(vector)`           | Convert vector to JSON text representation        |
+| `vec_each(vector)`              | Table function to iterate each element            |
 
 ### Distance Functions
 
-| Function | Description | Vector Types |
-|---|---|---|
-| `vec_distance_L2(a, b)` | Euclidean (L2) distance | float32, int8 |
-| `vec_distance_cosine(a, b)` | Cosine distance | float32, int8 |
-| `vec_distance_hamming(a, b)` | Hamming distance | bit only |
+| Function                     | Description             | Vector Types  |
+| ---------------------------- | ----------------------- | ------------- |
+| `vec_distance_L2(a, b)`      | Euclidean (L2) distance | float32, int8 |
+| `vec_distance_cosine(a, b)`  | Cosine distance         | float32, int8 |
+| `vec_distance_hamming(a, b)` | Hamming distance        | bit only      |
 
 ### Quantization
 
-| Function | Description |
-|---|---|
+| Function                      | Description                                                 |
+| ----------------------------- | ----------------------------------------------------------- |
 | `vec_quantize_binary(vector)` | Quantize float32/int8 to bitvector. Positive→1, negative→0. |
-| `vec_quantize_i8(vector)` | Quantize float32 to int8 (documentation pending) |
+| `vec_quantize_i8(vector)`     | Quantize float32 to int8 (documentation pending)            |
 
 ### Meta
 
-| Function | Description |
-|---|---|
-| `vec_version()` | Returns installed version string |
-| `vec_debug()` | Returns debugging info (version, date, commit, build flags) |
+| Function        | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| `vec_version()` | Returns installed version string                            |
+| `vec_debug()`   | Returns debugging info (version, date, commit, build flags) |
 
 ---
 
@@ -134,16 +134,17 @@ create virtual table vec_chunks using vec0(
 );
 ```
 
-| Column Type | Description | KNN WHERE? | Max Count |
-|---|---|---|---|
-| **Vector columns** | The vector data (float, int8, bit) | MATCH only | — |
-| **Metadata columns** | Regular typed columns (TEXT, INTEGER, FLOAT, BOOLEAN) | Yes (`=`, `!=`, `>`, `>=`, `<`, `<=`) | 16 |
-| **Auxiliary columns** | Large data stored in separate table (prefix `+`) | No (SELECT only) | 16 |
-| **Partition key** | Internal sharding key for selective queries | `=` only | 4 |
+| Column Type           | Description                                           | KNN WHERE?                            | Max Count |
+| --------------------- | ----------------------------------------------------- | ------------------------------------- | --------- |
+| **Vector columns**    | The vector data (float, int8, bit)                    | MATCH only                            | —         |
+| **Metadata columns**  | Regular typed columns (TEXT, INTEGER, FLOAT, BOOLEAN) | Yes (`=`, `!=`, `>`, `>=`, `<`, `<=`) | 16        |
+| **Auxiliary columns** | Large data stored in separate table (prefix `+`)      | No (SELECT only)                      | 16        |
+| **Partition key**     | Internal sharding key for selective queries           | `=` only                              | 4         |
 
 ### Metadata Columns — Supported Operations
 
 Metadata columns in a KNN `WHERE` clause support only:
+
 - `=`, `!=`, `>`, `>=`, `<`, `<=`
 - Boolean columns: `=` and `!=` only
 - **NOT** supported: `IS NULL`, `LIKE`, `GLOB`, `REGEXP`, scalar functions
@@ -246,28 +247,28 @@ create table documents(
 **100k vectors, stored on disk, average KNN query time:**
 
 | Dimensions | float32 | bit (quantized) |
-|---|---|---|
-| 3072 | 214 ms | 11 ms |
-| 1536 | 105 ms | ~6 ms |
-| 768 | ~50 ms | ~4 ms |
-| 384 | ~30 ms | ~3 ms |
+| ---------- | ------- | --------------- |
+| 3072       | 214 ms  | 11 ms           |
+| 1536       | 105 ms  | ~6 ms           |
+| 768        | ~50 ms  | ~4 ms           |
+| 384        | ~30 ms  | ~3 ms           |
 
 **1M vectors (SIFT1M, 128-dim, in-memory):**
 
-| Method | Build Time | Query Time |
-|---|---|---|
-| sqlite-vec static (in-memory) | 1 ms | 17 ms |
-| sqlite-vec vec0 | ~4 s | 33 ms |
-| Faiss (brute force) | 126 ms | 10 ms |
-| NumPy | 0 ms | 136 ms |
+| Method                        | Build Time | Query Time |
+| ----------------------------- | ---------- | ---------- |
+| sqlite-vec static (in-memory) | 1 ms       | 17 ms      |
+| sqlite-vec vec0               | ~4 s       | 33 ms      |
+| Faiss (brute force)           | 126 ms     | 10 ms      |
+| NumPy                         | 0 ms       | 136 ms     |
 
 ### Practical Limits
 
-| Scale | float32 | binary quantized |
-|---|---|---|
-| < 100k vectors | ✅ Sub-100ms for all dimensions | ✅ Excellent |
-| 100k–500k vectors | ⚠️ Acceptable for dim ≤ 768 | ✅ Fast |
-| 1M+ vectors | ❌ All float dims exceed 100ms target | ⚠️ ~124 ms for bit vectors |
+| Scale             | float32                              | binary quantized          |
+| ----------------- | ------------------------------------ | ------------------------- |
+| < 100k vectors    | ✅ Sub-100ms for all dimensions       | ✅ Excellent               |
+| 100k–500k vectors | ⚠️ Acceptable for dim ≤ 768           | ✅ Fast                    |
+| 1M+ vectors       | ❌ All float dims exceed 100ms target | ⚠️ ~124 ms for bit vectors |
 
 ### Quantization Benefits
 
@@ -401,14 +402,14 @@ ORDER BY rank;
 
 ### Key Options
 
-| Option | Description |
-|---|---|
-| `tokenize` | Tokenizer selection (unicode61, ascii, porter, trigram) |
-| `prefix` | Prefix index lengths for faster prefix queries |
-| `content` | External content table or `''` for contentless |
-| `content_rowid` | Rowid column name in external content table |
-| `columnsize` | Store per-column token counts (default 1, set 0 to save space) |
-| `detail` | Index detail level: `full`, `column`, or `none` |
+| Option          | Description                                                    |
+| --------------- | -------------------------------------------------------------- |
+| `tokenize`      | Tokenizer selection (unicode61, ascii, porter, trigram)        |
+| `prefix`        | Prefix index lengths for faster prefix queries                 |
+| `content`       | External content table or `''` for contentless                 |
+| `content_rowid` | Rowid column name in external content table                    |
+| `columnsize`    | Store per-column token counts (default 1, set 0 to save space) |
+| `detail`        | Index detail level: `full`, `column`, or `none`                |
 
 ---
 
@@ -425,6 +426,7 @@ BM25(D, Q) = -1 × Σ(i=1..nPhrase) IDF(qi) × f(qi,D) × (k1+1) / (f(qi,D) + k1
 ```
 
 Where:
+
 - `nPhrase` = number of phrases in the query
 - `|D|` = number of tokens in document D
 - `avgdl` = average tokens across all documents
@@ -438,6 +440,7 @@ IDF(qi) = ln((N - n(qi) + 0.5) / (n(qi) + 0.5))
 ```
 
 Where:
+
 - `N` = total rows in FTS5 table
 - `n(qi)` = rows containing phrase qi
 
@@ -461,11 +464,11 @@ INSERT INTO docs(docs, rank) VALUES('rank', 'bm25(10.0, 5.0)');
 
 ### Built-in Auxiliary Functions
 
-| Function | Description |
-|---|---|
-| `bm25(table, w1, w2, ...)` | BM25 relevance score (lower = better match) |
-| `highlight(table, col, open, close)` | Returns text with matches wrapped in markup |
-| `snippet(table, col, open, close, ellip, max_tokens)` | Returns fragment with matches highlighted |
+| Function                                              | Description                                 |
+| ----------------------------------------------------- | ------------------------------------------- |
+| `bm25(table, w1, w2, ...)`                            | BM25 relevance score (lower = better match) |
+| `highlight(table, col, open, close)`                  | Returns text with matches wrapped in markup |
+| `snippet(table, col, open, close, ellip, max_tokens)` | Returns fragment with matches highlighted   |
 
 ---
 
@@ -475,12 +478,12 @@ INSERT INTO docs(docs, rank) VALUES('rank', 'bm25(10.0, 5.0)');
 
 ### Built-in Tokenizers
 
-| Tokenizer | Description | Best For |
-|---|---|---|
-| **unicode61** (default) | Unicode 6.1 standard, case-insensitive, removes diacritics from Latin | General multilingual text |
-| **ascii** | Non-ASCII chars are always token chars | ASCII-heavy content |
-| **porter** | Wrapper; applies Porter stemming to another tokenizer | English text (corrected → correct) |
-| **trigram** | Every 3-char sequence is a token | Substring matching, LIKE/GLOB |
+| Tokenizer               | Description                                                           | Best For                           |
+| ----------------------- | --------------------------------------------------------------------- | ---------------------------------- |
+| **unicode61** (default) | Unicode 6.1 standard, case-insensitive, removes diacritics from Latin | General multilingual text          |
+| **ascii**               | Non-ASCII chars are always token chars                                | ASCII-heavy content                |
+| **porter**              | Wrapper; applies Porter stemming to another tokenizer                 | English text (corrected → correct) |
+| **trigram**             | Every 3-char sequence is a token                                      | Substring matching, LIKE/GLOB      |
 
 ### Configuration Examples
 
@@ -504,6 +507,7 @@ CREATE VIRTUAL TABLE docs USING fts5(
 ### Recommendation for RAG
 
 For a RAG system processing English text:
+
 - **`porter unicode61`** is the best default — it stems words and handles
   Unicode properly.
 - Add `prefix='2 3'` if prefix queries are common.
@@ -592,6 +596,7 @@ RRF_score(d) = Σ(i=1..n) 1 / (k + rank_i(d))
 ```
 
 Where:
+
 - `d` = document
 - `n` = number of ranking systems (e.g., 2 for BM25 + vector)
 - `k` = constant (recommended: **60**)
@@ -787,33 +792,33 @@ LIMIT 10;
 
 ### Advantages for Local RAG
 
-| Advantage | Detail |
-|---|---|
-| **Zero infrastructure** | Single file, no server, no Docker |
-| **Portable** | Database file can be copied, backed up, version-controlled |
-| **Unified storage** | Vectors, FTS index, metadata, and content in one file |
-| **SQL interface** | Standard querying, JOINs, aggregations alongside vector search |
-| **Mature ecosystem** | WAL mode, PRAGMA optimizations, backup APIs |
-| **Tiny footprint** | sqlite-vec binary is ~100s of KB |
+| Advantage               | Detail                                                         |
+| ----------------------- | -------------------------------------------------------------- |
+| **Zero infrastructure** | Single file, no server, no Docker                              |
+| **Portable**            | Database file can be copied, backed up, version-controlled     |
+| **Unified storage**     | Vectors, FTS index, metadata, and content in one file          |
+| **SQL interface**       | Standard querying, JOINs, aggregations alongside vector search |
+| **Mature ecosystem**    | WAL mode, PRAGMA optimizations, backup APIs                    |
+| **Tiny footprint**      | sqlite-vec binary is ~100s of KB                               |
 
 ### Limitations vs Dedicated Vector DBs
 
-| Limitation | Impact | Mitigation |
-|---|---|---|
-| No ANN index | O(N) per query | Binary quantization, Matryoshka, partitions |
-| Single writer | No concurrent inserts | WAL mode for concurrent reads |
-| No distributed | Single machine only | Fine for local/desktop RAG |
-| Scale ceiling | ~100k float32 vectors for <100ms | Use bit vectors for ~10× speed |
+| Limitation     | Impact                           | Mitigation                                  |
+| -------------- | -------------------------------- | ------------------------------------------- |
+| No ANN index   | O(N) per query                   | Binary quantization, Matryoshka, partitions |
+| Single writer  | No concurrent inserts            | WAL mode for concurrent reads               |
+| No distributed | Single machine only              | Fine for local/desktop RAG                  |
+| Scale ceiling  | ~100k float32 vectors for <100ms | Use bit vectors for ~10× speed              |
 
 ### Scale Guidance
 
-| Dataset Size | Recommendation |
-|---|---|
-| < 10k vectors | sqlite-vec is ideal; any dimension works |
-| 10k–100k vectors | sqlite-vec with cosine distance; consider binary quantization for large dims |
-| 100k–500k vectors | Binary quantization strongly recommended; partition by user/doc |
-| 500k–1M vectors | At the edge; evaluate latency requirements carefully |
-| > 1M vectors | Consider dedicated vector DB or wait for ANN support |
+| Dataset Size      | Recommendation                                                               |
+| ----------------- | ---------------------------------------------------------------------------- |
+| < 10k vectors     | sqlite-vec is ideal; any dimension works                                     |
+| 10k–100k vectors  | sqlite-vec with cosine distance; consider binary quantization for large dims |
+| 100k–500k vectors | Binary quantization strongly recommended; partition by user/doc              |
+| 500k–1M vectors   | At the edge; evaluate latency requirements carefully                         |
+| > 1M vectors      | Consider dedicated vector DB or wait for ANN support                         |
 
 ### Performance Tuning
 
@@ -872,18 +877,18 @@ rag4you-cli hybrid search backend:
 
 ## Source Index
 
-| # | Source | URL | Content |
-|---|---|---|---|
-| 1 | sqlite-vec homepage | <https://alexgarcia.xyz/sqlite-vec/> | Overview, installation |
-| 2 | sqlite-vec GitHub | <https://github.com/asg017/sqlite-vec> | README, sample usage |
-| 3 | sqlite-vec API Reference | <https://alexgarcia.xyz/sqlite-vec/api-reference.html> | All SQL functions |
-| 4 | sqlite-vec vec0 docs | <https://alexgarcia.xyz/sqlite-vec/features/vec0.html> | Metadata, partitions, auxiliary columns |
-| 5 | sqlite-vec KNN docs | <https://alexgarcia.xyz/sqlite-vec/features/knn.html> | KNN query patterns |
-| 6 | sqlite-vec Python docs | <https://alexgarcia.xyz/sqlite-vec/python.html> | Python integration guide |
-| 7 | sqlite-vec v0.1.0 release blog | <https://alexgarcia.xyz/blog/2024/sqlite-vec-stable-release/index.html> | Benchmarks, architecture, limitations |
-| 8 | sqlite-vec design blog | <https://alexgarcia.xyz/blog/2024/building-new-vector-search-sqlite/index.html> | Design rationale, sqlite-vss comparison |
-| 9 | SQLite FTS5 docs | <https://www.sqlite.org/fts5.html> | Complete FTS5 reference |
-| 10 | RRF paper | Cormack et al. SIGIR 2009, DOI: 10.1145/1571941.1572114 | Algorithm, k=60 recommendation |
+| #   | Source                         | URL                                                                             | Content                                 |
+| --- | ------------------------------ | ------------------------------------------------------------------------------- | --------------------------------------- |
+| 1   | sqlite-vec homepage            | <https://alexgarcia.xyz/sqlite-vec/>                                            | Overview, installation                  |
+| 2   | sqlite-vec GitHub              | <https://github.com/asg017/sqlite-vec>                                          | README, sample usage                    |
+| 3   | sqlite-vec API Reference       | <https://alexgarcia.xyz/sqlite-vec/api-reference.html>                          | All SQL functions                       |
+| 4   | sqlite-vec vec0 docs           | <https://alexgarcia.xyz/sqlite-vec/features/vec0.html>                          | Metadata, partitions, auxiliary columns |
+| 5   | sqlite-vec KNN docs            | <https://alexgarcia.xyz/sqlite-vec/features/knn.html>                           | KNN query patterns                      |
+| 6   | sqlite-vec Python docs         | <https://alexgarcia.xyz/sqlite-vec/python.html>                                 | Python integration guide                |
+| 7   | sqlite-vec v0.1.0 release blog | <https://alexgarcia.xyz/blog/2024/sqlite-vec-stable-release/index.html>         | Benchmarks, architecture, limitations   |
+| 8   | sqlite-vec design blog         | <https://alexgarcia.xyz/blog/2024/building-new-vector-search-sqlite/index.html> | Design rationale, sqlite-vss comparison |
+| 9   | SQLite FTS5 docs               | <https://www.sqlite.org/fts5.html>                                              | Complete FTS5 reference                 |
+| 10  | RRF paper                      | Cormack et al. SIGIR 2009, DOI: 10.1145/1571941.1572114                         | Algorithm, k=60 recommendation          |
 
 ## Related pages
 

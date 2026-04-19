@@ -1,7 +1,7 @@
 # Model Context Protocol (MCP)
 
 **Summary**: MCP is an open-source standard for connecting AI applications to external systems via a client-server architecture with JSON-RPC 2.0 messaging. It defines three core primitives (tools, resources, prompts) and two transport mechanisms (stdio, Streamable HTTP).
-**Sources**: https://modelcontextprotocol.io/introduction, https://modelcontextprotocol.io/docs/concepts/architecture, https://modelcontextprotocol.io/docs/concepts/transports
+**Sources**: <https://modelcontextprotocol.io/introduction>, <https://modelcontextprotocol.io/docs/concepts/architecture>, <https://modelcontextprotocol.io/docs/concepts/transports>
 **Last updated**: 2025-07-22
 ---
 
@@ -23,10 +23,10 @@ MCP follows a **client-server** architecture with three participants:
 
 ### Two layers
 
-| Layer | Purpose |
-|---|---|
-| **Data layer** | JSON-RPC 2.0 protocol: lifecycle management, primitives (tools, resources, prompts), notifications |
-| **Transport layer** | Communication channels: stdio or Streamable HTTP, connection establishment, message framing |
+| Layer               | Purpose                                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| **Data layer**      | JSON-RPC 2.0 protocol: lifecycle management, primitives (tools, resources, prompts), notifications |
+| **Transport layer** | Communication channels: stdio or Streamable HTTP, connection establishment, message framing        |
 
 ## Core Primitives
 
@@ -53,6 +53,7 @@ Executable functions the LLM can invoke. Similar to POST endpoints — they perf
 ```
 
 Key tool concepts:
+
 - **Discovery**: `tools/list` — clients enumerate available tools
 - **Execution**: `tools/call` — clients invoke tools with arguments
 - **Structured output**: Tools can define `outputSchema` for typed responses plus `structuredContent` in results
@@ -75,6 +76,7 @@ Data sources providing context. Similar to GET endpoints — no side effects.
 ```
 
 Key resource concepts:
+
 - **URI-based**: Each resource identified by a unique URI (file://, https://, git://, custom schemes)
 - **Templates**: Parameterized resources using URI templates (`file:///{path}`)
 - **Subscriptions**: Clients can subscribe to changes (`resources/subscribe`)
@@ -132,12 +134,14 @@ Reusable interaction templates, typically exposed as slash commands.
 ## Security Requirements
 
 Servers MUST:
+
 - Validate all tool inputs
 - Implement access controls
 - Rate limit tool invocations
 - Sanitize tool outputs
 
 Clients SHOULD:
+
 - Prompt for user confirmation on sensitive operations
 - Show tool inputs to user before calling
 - Validate tool results before passing to LLM
@@ -146,6 +150,7 @@ Clients SHOULD:
 ## Relevance to rag4you-cli
 
 SP4 plans to build a **dynamic, scope-aware MCP server** using [[mcp-python-sdk]] at `rag4you/mcp/` that:
+
 - Derives tools from the active config (one tool per collection), with schemas via [[pydantic-v2]]
 - Supports project-vs-global scope awareness
 - Integrates with the SP3 CLI wizard

@@ -1,7 +1,7 @@
 # Python uv Package Manager
 
 **Summary**: uv is an extremely fast Python package and project manager written in Rust (by Astral, makers of [[ruff-linter]]). It replaces pip, pip-tools, pipx, poetry, pyenv, virtualenv, and more. The rag4you-cli project mandates `uv add` and `uv run` for all Python work.
-**Sources**: `docs/references/toolchain/bibliography.md`, https://docs.astral.sh/uv/, https://docs.astral.sh/uv/guides/projects/, https://docs.astral.sh/uv/concepts/projects/dependencies/
+**Sources**: `docs/references/toolchain/bibliography.md`, <https://docs.astral.sh/uv/>, <https://docs.astral.sh/uv/guides/projects/>, <https://docs.astral.sh/uv/concepts/projects/dependencies/>
 **Last updated**: 2025-07-22
 ---
 
@@ -101,9 +101,11 @@ default-groups = ["dev"]
 ## Dependency types
 
 ### project.dependencies
+
 Published dependencies. Included when package is installed by others.
 
 ### project.optional-dependencies (extras)
+
 Optional dependency groups. Installed with `package[extra]` syntax.
 
 ```bash
@@ -112,6 +114,7 @@ uv add tiktoken --optional bench
 ```
 
 ### dependency-groups (PEP 735)
+
 Local development dependencies. NOT included when published.
 
 ```bash
@@ -120,6 +123,7 @@ uv add --group lint ruff     # Goes to [dependency-groups] lint = [...]
 ```
 
 Groups can nest:
+
 ```toml
 [dependency-groups]
 dev = [
@@ -129,6 +133,7 @@ dev = [
 ```
 
 ### tool.uv.sources
+
 Alternative sources for development (Git, path, workspace):
 
 ```toml

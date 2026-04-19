@@ -9,6 +9,7 @@ Append-only record of all wiki operations.
 **Source**: Official documentation from modelcontextprotocol.io, GitHub repos, docs.astral.sh, docs.pydantic.dev
 **Operation**: Created 6 knowledge pages from research across 20+ official documentation sources.
 **Pages created**:
+
 - `mcp-protocol.md` — MCP architecture, primitives, transports, lifecycle, security
 - `mcp-python-sdk.md` — FastMCP API, decorators, structured output, server transports, auth
 - `python-uv.md` — Project structure, commands, dependency types, script entry points
@@ -23,6 +24,7 @@ Append-only record of all wiki operations.
 **Source**: 18 academic papers (arxiv, NeurIPS, EMNLP, IEEE-MIPR, ICLR) + 7 official documentation sources (Anthropic, LlamaIndex, LangChain)
 **Operation**: Created `rag-research-compendium.md` from comprehensive research across RAG academic literature.
 **Pages created**:
+
 - `rag-research-compendium.md` — Lewis et al. (2020) foundational paper, Gao et al. (2024) survey, retrieval techniques (DPR, ColBERT, hybrid/RRF), chunking strategies, reranking, query decomposition, advanced paradigms (Self-RAG, CRAG, GraphRAG), evaluation metrics, token economy, local/offline RAG
 **Purpose**: Provide academic foundations for all RAG implementation decisions across SP0-SP4.
 
@@ -31,6 +33,7 @@ Append-only record of all wiki operations.
 **Source**: sqlite-vec official docs (alexgarcia.xyz/sqlite-vec), SQLite FTS5 official docs (sqlite.org/fts5.html), Cormack et al. (2009) RRF paper
 **Operation**: Created `sqlite-vec-fts5-hybrid-search.md` from official documentation research.
 **Pages created**:
+
 - `sqlite-vec-fts5-hybrid-search.md` — sqlite-vec API, vec0 virtual table, KNN queries, FTS5 BM25, tokenizers, RRF algorithm, hybrid search architecture, scale considerations, design decisions
 **Purpose**: Provide authoritative storage backend reference for SP0 benchmark target and SP1 core implementation.
 
@@ -39,6 +42,7 @@ Append-only record of all wiki operations.
 **Source**: HuggingFace model cards, arXiv papers (8 papers), Qdrant/FastEmbed official docs, MTEB benchmark
 **Operation**: Created `embedding-models-research.md` from official sources and academic papers.
 **Pages created**:
+
 - `embedding-models-research.md` — FastEmbed library, BGE models (3 tiers), code embedding models (Jina v2, Nomic, GTE-Qwen2), cross-encoder reranking (BGE Reranker v2 M3), chunking strategies for code vs docs, model selection matrix
 **Purpose**: Guide embedding model selection and configuration for SP0 sweep matrix and SP1/SP2 model tiers.
 
@@ -47,6 +51,7 @@ Append-only record of all wiki operations.
 **Source**: Manning/Raghavan/Schütze textbook, TREC methodology, RAGAS docs, 20 authoritative academic sources (NeurIPS, NAACL, ACL, SIGIR)
 **Operation**: Created `ir-evaluation-benchmarking.md` from academic and official documentation research.
 **Pages created**:
+
 - `ir-evaluation-benchmarking.md` — Classical IR metrics (Precision@k, MRR, NDCG), RAGAS framework, ARES, LLM-as-judge (Zheng et al.), golden set construction, synthetic query generation, reproducibility, checkpoint/resume patterns, token economy
 **Purpose**: Provide academic foundations for SP0 benchmark harness (metrics.py, judges/, golden/, checkpoint.py).
 
@@ -55,6 +60,7 @@ Append-only record of all wiki operations.
 **Source**: Quality review against `wiki/CLAUDE.md` conventions
 **Operation**: Normalized all 10 content pages to comply with wiki page format. Fixed headers (Summary/Sources/Last updated), added `[[knowledge-links]]` throughout body text, added `## Related pages` footers, added inline `(source: filename)` citations, fixed 384-dim vs 768-dim contradiction in sqlite-vec page, deduplicated evaluation content in rag-research-compendium (defers to `[[ir-evaluation-benchmarking]]`), labeled planned code paths as "(planned — not yet implemented)".
 **Pages modified**:
+
 - `rag-research-compendium.md` — header, knowledge-links, citations, evaluation dedup, Related pages
 - `embedding-models-research.md` — header, knowledge-links, citations, Related pages
 - `sqlite-vec-fts5-hybrid-search.md` — header, knowledge-links, citations, dimension fix, Related pages
@@ -72,6 +78,7 @@ Append-only record of all wiki operations.
 **Source**: Phase 1 implementation (bench/ package)
 **Operation**: Updated `ir-evaluation-benchmarking.md` to reflect Phase 1 deliverables — `bench/metrics.py` and `bench/tests/` are now implemented (48 tests green).
 **Pages modified**:
+
 - `ir-evaluation-benchmarking.md` — removed "(planned, not yet implemented)" from `bench/metrics.py` reference in §1.3; updated `bench/tests/` reference in §3.5 to reflect 48 passing tests; bumped Last updated to 2026-04-19
 **Purpose**: Keep wiki in sync with implemented Phase 1 artifacts per CLAUDE.md convention.
 
@@ -80,6 +87,7 @@ Append-only record of all wiki operations.
 **Source**: arXiv:2504.19874 (TurboQuant paper), arXiv:2406.03482 (QJL paper), PolarQuant paper, Firmamento-Technologies/TurboQuant (GitHub), yashkc2025/turboquant (GitHub), colliery-io/graphqlite (GitHub v0.4.4), graphqlite docs/tutorials/graphrag.md, graphqlite examples/llm-graphrag/
 **Operation**: Deep research on TurboQuant implementations for RAG embedding compression and GraphQLite for hybrid vector+graph RAG. Created raw reference docs and wiki knowledge pages.
 **Pages created**:
+
 - `turboquant-vector-quantization.md` — Algorithm overview, theoretical guarantees, RAG benchmarks (95%+ recall at 5.3x compression), three implementation repos (Firmamento for vector search, yashkc2025 general purpose, turboquant-mlx for Apple Silicon), integration patterns with sqlite-vec, configuration guidance for LLM agents
 - `graphqlite-hybrid-rag.md` — GraphQLite architecture (Cypher transpiler → SQL), 18 graph algorithms (PageRank, Louvain, Dijkstra, BFS, etc.), complete GraphRAG pipeline (entity extraction, co-occurrence graphs, multi-hop retrieval, community detection), triple-hybrid RAG architecture (vector + keyword + graph on same SQLite DB), integration code patterns
 **Raw docs saved**:
@@ -94,6 +102,7 @@ Append-only record of all wiki operations.
 **Source**: arXiv:2504.19874 Section 4.4 (NN Search Experiments), GraphQLite-documentation.pdf (261 pages, v0.4.4), web research on TurboQuant implementations (vivekvar-dl, TheTom/turboquant_plus), Diffbot/FalkorDB 2025 GraphRAG benchmarks
 **Operation**: Extended TurboQuant and GraphQLite documentation with official applicability examples, additional implementations, performance benchmarks, and comprehensive architecture details from official PDF extraction.
 **Raw docs saved**:
+
 - `docs/raw/turboquant/turboquant-applicability-examples.md` — Official paper NN search benchmarks, recall results on OpenAI embeddings, 6 implementation repos with code examples, embedding model compatibility guide, LLM agent decision matrix
 - `docs/raw/graphqlite/graphqlite-full-documentation.md` — Full 261-page PDF extraction (13,089 lines), comprehensive API reference
 - `docs/raw/graphqlite/graphqlite-extended-reference.md` — Curated reference with architecture pipeline, EAV schema details, performance benchmarks, Python API, GraphRAG tutorial code, scaling characteristics

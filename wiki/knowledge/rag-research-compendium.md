@@ -7,29 +7,66 @@
 
 ## Table of Contents
 
-1. [Foundational Paper — Lewis et al. (2020)](#1-foundational-paper--lewis-et-al-2020)
-2. [Comprehensive RAG Survey — Gao et al. (2024)](#2-comprehensive-rag-survey--gao-et-al-2024)
-3. [RAG Best Practices — Wang et al. EMNLP 2024](#3-rag-best-practices--wang-et-al-emnlp-2024)
-4. [Retrieval Techniques](#4-retrieval-techniques)
-   - 4.1 [Dense Passage Retrieval (DPR)](#41-dense-passage-retrieval-dpr)
-   - 4.2 [ColBERT — Late Interaction Retrieval](#42-colbert--late-interaction-retrieval)
-   - 4.3 [Hybrid Search and Reciprocal Rank Fusion](#43-hybrid-search-and-reciprocal-rank-fusion)
-   - 4.4 [Blended RAG — Sawarkar et al. IEEE-MIPR 2024](#44-blended-rag--sawarkar-et-al-ieee-mipr-2024)
-5. [Chunking Strategies](#5-chunking-strategies)
-   - 5.1 [Fixed-Size Chunking](#51-fixed-size-chunking)
-   - 5.2 [Semantic and Recursive Chunking](#52-semantic-and-recursive-chunking)
-   - 5.3 [Contextual Retrieval — Anthropic (2024)](#53-contextual-retrieval--anthropic-2024)
-   - 5.4 [LlamaIndex Node Parsers](#54-llamaindex-node-parsers)
-6. [Reranking Strategies](#6-reranking-strategies)
-7. [Query Decomposition and Transformation](#7-query-decomposition-and-transformation)
-8. [Advanced RAG Paradigms](#8-advanced-rag-paradigms)
-   - 8.1 [Self-RAG — Adaptive Retrieval](#81-self-rag--adaptive-retrieval)
-   - 8.2 [CRAG — Corrective RAG](#82-crag--corrective-rag)
-   - 8.3 [GraphRAG — Knowledge Graph RAG](#83-graphrag--knowledge-graph-rag)
-9. [Evaluation Metrics and Frameworks](#9-evaluation-metrics-and-frameworks)
-10. [Token Economy and Efficiency](#10-token-economy-and-efficiency)
-11. [Local and Offline RAG](#11-local-and-offline-rag)
-12. [Quick Reference — Paper Index](#12-quick-reference--paper-index)
+- [RAG Research Compendium](#rag-research-compendium)
+  - [**Last updated**: 2025-07-22](#last-updated-2025-07-22)
+  - [Table of Contents](#table-of-contents)
+  - [1. Foundational Paper — Lewis et al. (2020)](#1-foundational-paper--lewis-et-al-2020)
+    - [Core Idea](#core-idea)
+    - [Architecture](#architecture)
+    - [Two Variants](#two-variants)
+    - [Training](#training)
+    - [Key Results](#key-results)
+    - [Implementation Insights](#implementation-insights)
+  - [2. Comprehensive RAG Survey — Gao et al. (2024)](#2-comprehensive-rag-survey--gao-et-al-2024)
+    - [RAG Paradigm Taxonomy](#rag-paradigm-taxonomy)
+    - [Tripartite Framework](#tripartite-framework)
+    - [Key Challenges Identified](#key-challenges-identified)
+  - [3. RAG Best Practices — Wang et al. EMNLP 2024](#3-rag-best-practices--wang-et-al-emnlp-2024)
+    - [Workflow Components Evaluated](#workflow-components-evaluated)
+    - [Key Findings](#key-findings)
+    - [Practical Recommendations](#practical-recommendations)
+  - [4. Retrieval Techniques](#4-retrieval-techniques)
+    - [4.1 Dense Passage Retrieval (DPR)](#41-dense-passage-retrieval-dpr)
+    - [4.2 ColBERT — Late Interaction Retrieval](#42-colbert--late-interaction-retrieval)
+    - [4.3 Hybrid Search and Reciprocal Rank Fusion](#43-hybrid-search-and-reciprocal-rank-fusion)
+    - [4.4 Blended RAG — Sawarkar et al. IEEE-MIPR 2024](#44-blended-rag--sawarkar-et-al-ieee-mipr-2024)
+  - [5. Chunking Strategies](#5-chunking-strategies)
+    - [5.1 Fixed-Size Chunking](#51-fixed-size-chunking)
+    - [5.2 Semantic and Recursive Chunking](#52-semantic-and-recursive-chunking)
+    - [5.3 Contextual Retrieval — Anthropic (2024)](#53-contextual-retrieval--anthropic-2024)
+    - [5.4 LlamaIndex Node Parsers](#54-llamaindex-node-parsers)
+  - [6. Reranking Strategies](#6-reranking-strategies)
+    - [Why Reranking Matters](#why-reranking-matters)
+    - [Cross-Encoder Reranking](#cross-encoder-reranking)
+    - [Impact](#impact)
+  - [7. Query Decomposition and Transformation](#7-query-decomposition-and-transformation)
+    - [Techniques](#techniques)
+      - [Multi-Query Rewriting](#multi-query-rewriting)
+      - [Query Decomposition](#query-decomposition)
+      - [Step-Back Prompting](#step-back-prompting)
+      - [Query Refinement](#query-refinement)
+      - [Adaptive Topic-Filtered Retrieval](#adaptive-topic-filtered-retrieval)
+      - [Multi-Agent Query Processing](#multi-agent-query-processing)
+    - [Multi-Hop Benchmark](#multi-hop-benchmark)
+  - [8. Advanced RAG Paradigms](#8-advanced-rag-paradigms)
+    - [8.1 Self-RAG — Adaptive Retrieval](#81-self-rag--adaptive-retrieval)
+    - [8.2 CRAG — Corrective RAG](#82-crag--corrective-rag)
+    - [8.3 GraphRAG — Knowledge Graph RAG](#83-graphrag--knowledge-graph-rag)
+  - [9. Evaluation Metrics and Frameworks](#9-evaluation-metrics-and-frameworks)
+  - [10. Token Economy and Efficiency](#10-token-economy-and-efficiency)
+    - [Context Window Utilization](#context-window-utilization)
+    - [Systems Trade-offs](#systems-trade-offs)
+    - [Adaptive Context Compression](#adaptive-context-compression)
+    - [Cost Optimization Strategies](#cost-optimization-strategies)
+    - [RAG vs. Long Context Windows](#rag-vs-long-context-windows)
+  - [11. Local and Offline RAG](#11-local-and-offline-rag)
+    - [Component Stack](#component-stack)
+    - [Recommended Local Models (2024)](#recommended-local-models-2024)
+    - [Local RAG Pipeline Architecture](#local-rag-pipeline-architecture)
+    - [Best Practices for Local RAG](#best-practices-for-local-rag)
+    - [Minimum Hardware Requirements](#minimum-hardware-requirements)
+  - [12. Quick Reference — Paper Index](#12-quick-reference--paper-index)
+  - [Related pages](#related-pages)
 
 ---
 
@@ -64,10 +101,10 @@ Query + Passages ──► Generator (BART/T5) ──► Output
 
 ### Two Variants
 
-| Variant | Marginalization | Behavior |
-|---------|----------------|----------|
-| **RAG-Sequence** | Per-sequence | Same document conditions the entire generated sequence |
-| **RAG-Token** | Per-token | Can switch documents at every generation step |
+| Variant          | Marginalization | Behavior                                               |
+| ---------------- | --------------- | ------------------------------------------------------ |
+| **RAG-Sequence** | Per-sequence    | Same document conditions the entire generated sequence |
+| **RAG-Token**    | Per-token       | Can switch documents at every generation step          |
 
 ### Training
 
@@ -100,11 +137,11 @@ Query + Passages ──► Generator (BART/T5) ──► Output
 
 The survey identifies three evolutionary paradigms:
 
-| Paradigm | Description |
-|----------|-------------|
-| **Naive RAG** | Simple retrieve-then-generate: chunk → embed → retrieve → generate |
+| Paradigm         | Description                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Naive RAG**    | Simple retrieve-then-generate: chunk → embed → retrieve → generate                                                             |
 | **Advanced RAG** | Adds pre-retrieval optimization (query rewriting), post-retrieval processing (reranking, compression), and iterative retrieval |
-| **Modular RAG** | Decomposes RAG into interchangeable modules: routing, scheduling, fusion strategies, and tool integration |
+| **Modular RAG**  | Decomposes RAG into interchangeable modules: routing, scheduling, fusion strategies, and tool integration                      |
 
 ### Tripartite Framework
 
@@ -165,6 +202,7 @@ The paper decomposes a RAG pipeline into **five processing steps** and benchmark
 **URL:** <https://arxiv.org/abs/2004.04906>
 
 **Key concepts:**
+
 - Bi-encoder architecture: separate BERT encoders for queries and passages (source: docs/references/rag-foundations/bibliography.md).
 - Retrieval via Maximum Inner Product Search (MIPS) over pre-computed passage embeddings.
 - Trained with in-batch negatives and hard negatives from BM25.
@@ -173,6 +211,7 @@ The paper decomposes a RAG pipeline into **five processing steps** and benchmark
 See [[embedding-models-research]] for a detailed comparison of embedding models used in retrieval.
 
 **Implementation notes:**
+
 - Use FAISS for efficient approximate nearest-neighbor search.
 - Hard negative mining during training is critical for performance.
 - Pre-computed passage embeddings enable real-time retrieval from millions of documents.
@@ -187,6 +226,7 @@ See [[embedding-models-research]] for a detailed comparison of embedding models 
 **Code:** <https://github.com/stanford-futuredata/ColBERT>
 
 **Key innovation — Late Interaction:**
+
 - Unlike bi-encoders (single-vector), ColBERT produces **per-token embeddings** for both queries and passages.
 - Matching uses **MaxSim** — the maximum similarity between each query token and all passage tokens, then summed.
 - This provides cross-encoder-like expressiveness with bi-encoder-like efficiency.
@@ -196,6 +236,7 @@ Score(q, d) = Σ_i max_j sim(q_i, d_j)
 ```
 
 **Why it matters for RAG:**
+
 - Passage representations are precomputed and stored.
 - Query encoding happens on-the-fly.
 - Achieves strong recall with low latency — ideal for first-stage retrieval in RAG pipelines.
@@ -217,6 +258,7 @@ RRF(d) = Σ_{i=1}^{k} 1 / (rank_i(d) + c)
 ```
 
 Where:
+
 - `k` = number of ranking lists (retrieval methods)
 - `rank_i(d)` = rank of document `d` in the i-th list
 - `c` = smoothing constant (typically 60)
@@ -234,6 +276,7 @@ def reciprocal_rank_fusion(rankings: list[dict], c: int = 60) -> dict:
 ```
 
 **Why hybrid search works:**
+
 - Dense retrieval captures semantic similarity ("revenue growth" matches "income increase").
 - BM25 captures exact terms ("Error code TS-999", specific identifiers).
 - RRF combines their strengths without requiring score normalization.
@@ -254,6 +297,7 @@ def reciprocal_rank_fusion(rankings: list[dict], c: int = 60) -> dict:
 > — Sawarkar et al. (2024), Abstract
 
 **Key contributions:**
+
 - Blends dense vector indexes with sparse encoder indexes using hybrid query strategies.
 - Sets new benchmarks on NQ and TREC-COVID retrieval datasets.
 - When applied end-to-end in a RAG system, surpasses fine-tuning on SQUAD QA benchmark.
@@ -271,10 +315,12 @@ Chunking is the process of splitting documents into retrievable units. The choic
 **Method:** Split text by character or token count (e.g., 256–512 tokens per chunk).
 
 **Advantages:**
+
 - Simple to implement.
 - Predictable chunk sizes for embedding models with token limits.
 
 **Disadvantages:**
+
 - Cuts across semantic boundaries (sentences, paragraphs).
 - Loss of context — a chunk may reference entities defined in a different chunk.
 
@@ -312,10 +358,12 @@ chunks = splitter.split_text(document_text)
 **Academic evidence:** Comparative evaluations (EMNLP 2024, Bioengineering 2025) confirm that adaptive and semantic chunking outperform fixed-size chunking in precision, recall, and downstream answer correctness.
 
 **References:**
+
 - "Searching for Best Practices in RAG" — EMNLP 2024 (<https://aclanthology.org/2024.emnlp-main.981>)
 - "Comparative Evaluation of Advanced Chunking for RAG in LLMs for Clinical Decision Support" — Bioengineering 2025 (<https://www.mdpi.com/2306-5354/12/11/1194>)
 
 **Best practices:**
+
 - Preserve semantic boundaries where possible.
 - Allow overlap (50–100 tokens) for context retention across chunk boundaries.
 - Enrich chunks with metadata (source, section title, page number).
@@ -329,7 +377,7 @@ chunks = splitter.split_text(document_text)
 **URL:** <https://www.anthropic.com/news/contextual-retrieval>  
 **Cookbook:** <https://platform.claude.com/cookbook/capabilities-contextual-embeddings-guide>
 
-**The Problem:** Traditional chunking strips context. A chunk saying _"The company's revenue grew by 3%"_ loses which company, which quarter, and what the baseline was.
+**The Problem:** Traditional chunking strips context. A chunk saying *"The company's revenue grew by 3%"* loses which company, which quarter, and what the baseline was.
 
 **The Solution — Contextual Chunk Enrichment:**
 
@@ -352,20 +400,21 @@ Answer only with the succinct context and nothing else.
 
 **Example transformation:**
 
-| Before | After |
-|--------|-------|
+| Before                                                        | After                                                                                                                                                                                  |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "The company's revenue grew by 3% over the previous quarter." | "This chunk is from an SEC filing on ACME Corp's performance in Q2 2023; the previous quarter's revenue was $314 million. The company's revenue grew by 3% over the previous quarter." |
 
 **Measured results (Anthropic benchmarks):**
 
-| Configuration | Retrieval Failure Rate (top-20) | Reduction |
-|--------------|-------------------------------|-----------|
-| Baseline embedding | 5.7% | — |
-| + Contextual Embeddings | 3.7% | −35% |
-| + Contextual Embeddings + Contextual BM25 | 2.9% | −49% |
-| + Contextual Embeddings + Contextual BM25 + Reranking | 1.9% | −67% |
+| Configuration                                         | Retrieval Failure Rate (top-20) | Reduction |
+| ----------------------------------------------------- | ------------------------------- | --------- |
+| Baseline embedding                                    | 5.7%                            | —         |
+| + Contextual Embeddings                               | 3.7%                            | −35%      |
+| + Contextual Embeddings + Contextual BM25             | 2.9%                            | −49%      |
+| + Contextual Embeddings + Contextual BM25 + Reranking | 1.9%                            | −67%      |
 
 **Implementation considerations:**
+
 - **Cost:** ~$1.02 per million document tokens (with prompt caching).
 - **Chunk boundaries:** Choice of chunk size and overlap still matters.
 - **Custom prompts:** Domain-specific contextualizer prompts improve results further (e.g., include a glossary).
@@ -381,14 +430,14 @@ Answer only with the succinct context and nothing else.
 
 LlamaIndex provides modular node parsers for different data types:
 
-| Parser | Use Case |
-|--------|----------|
-| `SentenceSplitter` | General text — splits by sentences with configurable size and overlap |
-| `MarkdownNodeParser` | Markdown documents — respects heading structure |
-| `HTMLNodeParser` | HTML — uses BeautifulSoup for tag-aware splitting |
-| `JSONNodeParser` | Structured JSON data |
-| `CodeSplitter` | Source code — respects function/class boundaries |
-| `SimpleFileNodeParser` | Auto-selects parser based on file type |
+| Parser                 | Use Case                                                              |
+| ---------------------- | --------------------------------------------------------------------- |
+| `SentenceSplitter`     | General text — splits by sentences with configurable size and overlap |
+| `MarkdownNodeParser`   | Markdown documents — respects heading structure                       |
+| `HTMLNodeParser`       | HTML — uses BeautifulSoup for tag-aware splitting                     |
+| `JSONNodeParser`       | Structured JSON data                                                  |
+| `CodeSplitter`         | Source code — respects function/class boundaries                      |
+| `SimpleFileNodeParser` | Auto-selects parser based on file type                                |
 
 ```python
 from llama_index.core.node_parser import SentenceSplitter
@@ -412,23 +461,25 @@ Initial retrieval (whether dense or sparse) optimizes for recall — it casts a 
 ### Cross-Encoder Reranking
 
 **How it works:**
+
 1. Retrieve top-N candidates (e.g., N=150) using fast first-stage retrieval.
 2. Pass each (query, passage) pair through a cross-encoder model.
 3. The cross-encoder produces a single relevance score per pair.
 4. Select top-K results (e.g., K=20) for the generator.
 
 **Key models:**
+
 - `cross-encoder/ms-marco-MiniLM-L-6-v2` — lightweight, runs locally
 - Cohere Rerank — cloud API
 - Voyage Reranker — cloud API
 
 **Trade-offs:**
 
-| Aspect | First-Stage Retrieval | Reranking |
-|--------|----------------------|-----------|
-| Speed | Fast (embeddings precomputed) | Slower (runs per query-passage pair) |
-| Accuracy | Good recall, moderate precision | High precision |
-| Scalability | Handles millions of documents | Applied only to top-N candidates |
+| Aspect      | First-Stage Retrieval           | Reranking                            |
+| ----------- | ------------------------------- | ------------------------------------ |
+| Speed       | Fast (embeddings precomputed)   | Slower (runs per query-passage pair) |
+| Accuracy    | Good recall, moderate precision | High precision                       |
+| Scalability | Handles millions of documents   | Applied only to top-N candidates     |
 
 ### Impact
 
@@ -514,6 +565,7 @@ Demonstrates that current RAG systems struggle with multi-hop queries requiring 
 > — Asai et al. (2023), Abstract
 
 **Key innovations:**
+
 - **Adaptive retrieval:** The model decides when retrieval is needed (not always).
 - **Reflection tokens:** Special tokens signal whether retrieved passages are relevant, whether the generation is supported, and whether it is useful.
 - **Controllable inference:** Reflection tokens enable tuning the trade-off between factuality and creativity at inference time.
@@ -566,6 +618,7 @@ Demonstrates that current RAG systems struggle with multi-hop queries requiring 
    - **Global Search:** Aggregate community summaries across the entire graph.
 
 **When to use GraphRAG:**
+
 - When queries require synthesis across many documents ("What are the main themes?").
 - When the corpus has rich entity relationships.
 - When disambiguation is important (same term, different contexts).
@@ -599,6 +652,7 @@ Accurate token counting is essential for managing context windows and cost optim
 **URL:** <https://arxiv.org/abs/2412.11854>
 
 **Key findings:**
+
 - RAG increases Time-To-First-Token (TTFT) latency due to retrieval overhead.
 - Memory usage can be orders of magnitude higher in large deployments.
 - Grid-search optimization for chunk size and model combinations can drastically lower latency.
@@ -613,14 +667,14 @@ Accurate token counting is essential for managing context windows and cost optim
 
 ### Cost Optimization Strategies
 
-| Strategy | Impact |
-|----------|--------|
-| **Query classification** (skip retrieval when unnecessary) | Reduces latency by ~50% for simple queries |
-| **Prompt caching** (Anthropic, OpenAI) | Reduces cost by up to 90% for repeated prefixes |
-| **Adaptive chunk count** | Retrieve fewer chunks for simple queries, more for complex ones |
-| **Context compression** | Summarize retrieved content before generation |
-| **Reranking + fewer chunks** | Higher precision with fewer tokens in the prompt |
-| **Embedding model selection** | Smaller models (e.g., MiniLM) for lower latency; larger for higher accuracy |
+| Strategy                                                   | Impact                                                                      |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Query classification** (skip retrieval when unnecessary) | Reduces latency by ~50% for simple queries                                  |
+| **Prompt caching** (Anthropic, OpenAI)                     | Reduces cost by up to 90% for repeated prefixes                             |
+| **Adaptive chunk count**                                   | Retrieve fewer chunks for simple queries, more for complex ones             |
+| **Context compression**                                    | Summarize retrieved content before generation                               |
+| **Reranking + fewer chunks**                               | Higher precision with fewer tokens in the prompt                            |
+| **Embedding model selection**                              | Smaller models (e.g., MiniLM) for lower latency; larger for higher accuracy |
 
 ### RAG vs. Long Context Windows
 
@@ -634,24 +688,26 @@ A fully local RAG system requires no cloud APIs. All components run on-device.
 
 ### Component Stack
 
-| Component | Local Options |
-|-----------|--------------|
+| Component           | Local Options                                                                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Embedding Model** | `sentence-transformers/all-MiniLM-L6-v2`, `BAAI/bge-small-en`, `nomic-ai/nomic-embed-text-v1.5` (see [[embedding-models-research]]) |
-| **Vector Database** | ChromaDB, FAISS, Qdrant (local mode), LanceDB, SQLite-VSS |
-| **LLM Inference** | Ollama, llama.cpp, vLLM, transformers (HuggingFace) |
-| **Reranker** | `cross-encoder/ms-marco-MiniLM-L-6-v2` (local) |
-| **Orchestration** | LangChain, LlamaIndex, Haystack, custom Python |
-| **BM25 Search** | rank_bm25 (Python), tantivy (Rust), SQLite FTS5 (see [[sqlite-vec-fts5-hybrid-search]]) |
+| **Vector Database** | ChromaDB, FAISS, Qdrant (local mode), LanceDB, SQLite-VSS                                                                           |
+| **LLM Inference**   | Ollama, llama.cpp, vLLM, transformers (HuggingFace)                                                                                 |
+| **Reranker**        | `cross-encoder/ms-marco-MiniLM-L-6-v2` (local)                                                                                      |
+| **Orchestration**   | LangChain, LlamaIndex, Haystack, custom Python                                                                                      |
+| **BM25 Search**     | rank_bm25 (Python), tantivy (Rust), SQLite FTS5 (see [[sqlite-vec-fts5-hybrid-search]])                                             |
 
 ### Recommended Local Models (2024)
 
 **LLMs (quantized for consumer hardware):**
+
 - Llama 3.1 8B (Q4_K_M) — strong general-purpose
 - Mistral 7B (Q4_K_M) — excellent instruction following
 - Phi-3 Mini (3.8B) — lightweight, strong reasoning
 - Qwen 2.5 7B — multilingual support
 
 **Embedding models:**
+
 - `BAAI/bge-small-en-v1.5` — 33M params, excellent quality/size ratio
 - `sentence-transformers/all-MiniLM-L6-v2` — 22M params, very fast
 - `nomic-ai/nomic-embed-text-v1.5` — 137M params, high quality, open source
@@ -685,40 +741,41 @@ Query ──► Embed + BM25 lookup ──► RRF Fusion ──► Reranker (cro
 
 ### Minimum Hardware Requirements
 
-| Component | CPU-Only | With GPU |
-|-----------|----------|----------|
-| RAM | 16 GB minimum | 16 GB minimum |
-| GPU VRAM | N/A | 6–8 GB (7B model, Q4) |
-| Storage | 20 GB | 20 GB |
-| Model loading | Slower (seconds) | Fast |
-| Inference speed | ~5–15 tokens/sec | ~30–80 tokens/sec |
+| Component       | CPU-Only         | With GPU              |
+| --------------- | ---------------- | --------------------- |
+| RAM             | 16 GB minimum    | 16 GB minimum         |
+| GPU VRAM        | N/A              | 6–8 GB (7B model, Q4) |
+| Storage         | 20 GB            | 20 GB                 |
+| Model loading   | Slower (seconds) | Fast                  |
+| Inference speed | ~5–15 tokens/sec | ~30–80 tokens/sec     |
 
 ---
 
 ## 12. Quick Reference — Paper Index
 
-| # | Paper | Year | Venue | Topic | URL |
-|---|-------|------|-------|-------|-----|
-| 1 | Lewis et al. — RAG | 2020 | NeurIPS | Foundational RAG | <https://arxiv.org/abs/2005.11401> |
-| 2 | Karpukhin et al. — DPR | 2020 | EMNLP | Dense Retrieval | <https://arxiv.org/abs/2004.04906> |
-| 3 | Khattab & Zaharia — ColBERT | 2020 | SIGIR | Late Interaction | <https://arxiv.org/abs/2004.12832> |
-| 4 | Cormack et al. — RRF | 2009 | SIGIR | Rank Fusion | SIGIR '09, pp. 758–759 |
-| 5 | Gao et al. — RAG Survey | 2024 | arXiv | Comprehensive Survey | <https://arxiv.org/abs/2312.10997> |
-| 6 | Wang et al. — RAG Best Practices | 2024 | EMNLP | Pipeline Optimization | <https://arxiv.org/abs/2407.01219> |
-| 7 | Sawarkar et al. — Blended RAG | 2024 | IEEE-MIPR | Hybrid Retrieval | <https://arxiv.org/abs/2404.07220> |
-| 8 | Es et al. — RAGAS | 2023 | arXiv | Evaluation Framework | <https://arxiv.org/abs/2309.15217> |
-| 9 | Yu et al. — RAG Eval Survey | 2024 | arXiv | Evaluation Survey | <https://arxiv.org/abs/2405.07437> |
-| 10 | Muennighoff et al. — MTEB | 2023 | EACL | Embedding Benchmark | <https://arxiv.org/abs/2210.07316> |
-| 11 | Asai et al. — Self-RAG | 2024 | ICLR | Adaptive Retrieval | <https://arxiv.org/abs/2310.11511> |
-| 12 | Yan et al. — CRAG | 2024 | arXiv | Corrective RAG | <https://arxiv.org/abs/2401.15884> |
-| 13 | Edge et al. — GraphRAG | 2024 | arXiv | KG-based RAG | <https://arxiv.org/abs/2404.16130> |
-| 14 | MultiHop-RAG Benchmark | 2024 | arXiv | Multi-hop Evaluation | <https://arxiv.org/abs/2401.15391> |
-| 15 | DMQR-RAG | 2024 | arXiv | Query Rewriting | <https://arxiv.org/abs/2411.13154> |
-| 16 | AT-RAG | 2024 | arXiv | Adaptive Topic Retrieval | <https://arxiv.org/abs/2410.12886> |
-| 17 | RQ-RAG | 2024 | arXiv | Query Refinement | <https://arxiv.org/abs/2404.00610> |
-| 18 | MA-RAG | 2025 | arXiv | Multi-Agent RAG | <https://arxiv.org/abs/2505.20096> |
+| #   | Paper                            | Year | Venue     | Topic                    | URL                                |
+| --- | -------------------------------- | ---- | --------- | ------------------------ | ---------------------------------- |
+| 1   | Lewis et al. — RAG               | 2020 | NeurIPS   | Foundational RAG         | <https://arxiv.org/abs/2005.11401> |
+| 2   | Karpukhin et al. — DPR           | 2020 | EMNLP     | Dense Retrieval          | <https://arxiv.org/abs/2004.04906> |
+| 3   | Khattab & Zaharia — ColBERT      | 2020 | SIGIR     | Late Interaction         | <https://arxiv.org/abs/2004.12832> |
+| 4   | Cormack et al. — RRF             | 2009 | SIGIR     | Rank Fusion              | SIGIR '09, pp. 758–759             |
+| 5   | Gao et al. — RAG Survey          | 2024 | arXiv     | Comprehensive Survey     | <https://arxiv.org/abs/2312.10997> |
+| 6   | Wang et al. — RAG Best Practices | 2024 | EMNLP     | Pipeline Optimization    | <https://arxiv.org/abs/2407.01219> |
+| 7   | Sawarkar et al. — Blended RAG    | 2024 | IEEE-MIPR | Hybrid Retrieval         | <https://arxiv.org/abs/2404.07220> |
+| 8   | Es et al. — RAGAS                | 2023 | arXiv     | Evaluation Framework     | <https://arxiv.org/abs/2309.15217> |
+| 9   | Yu et al. — RAG Eval Survey      | 2024 | arXiv     | Evaluation Survey        | <https://arxiv.org/abs/2405.07437> |
+| 10  | Muennighoff et al. — MTEB        | 2023 | EACL      | Embedding Benchmark      | <https://arxiv.org/abs/2210.07316> |
+| 11  | Asai et al. — Self-RAG           | 2024 | ICLR      | Adaptive Retrieval       | <https://arxiv.org/abs/2310.11511> |
+| 12  | Yan et al. — CRAG                | 2024 | arXiv     | Corrective RAG           | <https://arxiv.org/abs/2401.15884> |
+| 13  | Edge et al. — GraphRAG           | 2024 | arXiv     | KG-based RAG             | <https://arxiv.org/abs/2404.16130> |
+| 14  | MultiHop-RAG Benchmark           | 2024 | arXiv     | Multi-hop Evaluation     | <https://arxiv.org/abs/2401.15391> |
+| 15  | DMQR-RAG                         | 2024 | arXiv     | Query Rewriting          | <https://arxiv.org/abs/2411.13154> |
+| 16  | AT-RAG                           | 2024 | arXiv     | Adaptive Topic Retrieval | <https://arxiv.org/abs/2410.12886> |
+| 17  | RQ-RAG                           | 2024 | arXiv     | Query Refinement         | <https://arxiv.org/abs/2404.00610> |
+| 18  | MA-RAG                           | 2025 | arXiv     | Multi-Agent RAG          | <https://arxiv.org/abs/2505.20096> |
 
 **Official documentation cited:**
+
 - Anthropic Contextual Retrieval: <https://www.anthropic.com/news/contextual-retrieval>
 - LlamaIndex Node Parsers: <https://developers.llamaindex.ai/python/framework/module_guides/loading/node_parsers/modules/>
 - RAGAS Docs: <https://docs.ragas.io/>
