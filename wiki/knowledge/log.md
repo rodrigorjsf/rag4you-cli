@@ -74,3 +74,31 @@ Append-only record of all wiki operations.
 **Pages modified**:
 - `ir-evaluation-benchmarking.md` — removed "(planned, not yet implemented)" from `bench/metrics.py` reference in §1.3; updated `bench/tests/` reference in §3.5 to reflect 48 passing tests; bumped Last updated to 2026-04-19
 **Purpose**: Keep wiki in sync with implemented Phase 1 artifacts per CLAUDE.md convention.
+
+## 2025-07-23 — TurboQuant and GraphQLite deep research
+
+**Source**: arXiv:2504.19874 (TurboQuant paper), arXiv:2406.03482 (QJL paper), PolarQuant paper, Firmamento-Technologies/TurboQuant (GitHub), yashkc2025/turboquant (GitHub), colliery-io/graphqlite (GitHub v0.4.4), graphqlite docs/tutorials/graphrag.md, graphqlite examples/llm-graphrag/
+**Operation**: Deep research on TurboQuant implementations for RAG embedding compression and GraphQLite for hybrid vector+graph RAG. Created raw reference docs and wiki knowledge pages.
+**Pages created**:
+- `turboquant-vector-quantization.md` — Algorithm overview, theoretical guarantees, RAG benchmarks (95%+ recall at 5.3x compression), three implementation repos (Firmamento for vector search, yashkc2025 general purpose, turboquant-mlx for Apple Silicon), integration patterns with sqlite-vec, configuration guidance for LLM agents
+- `graphqlite-hybrid-rag.md` — GraphQLite architecture (Cypher transpiler → SQL), 18 graph algorithms (PageRank, Louvain, Dijkstra, BFS, etc.), complete GraphRAG pipeline (entity extraction, co-occurrence graphs, multi-hop retrieval, community detection), triple-hybrid RAG architecture (vector + keyword + graph on same SQLite DB), integration code patterns
+**Raw docs saved**:
+- `docs/raw/turboquant/turboquant-implementations.md` — Comprehensive implementation reference with code examples from both repos
+- `docs/raw/graphqlite-hybrid-rag.md` — Full GraphQLite documentation, API reference, and GraphRAG example code
+**Pages modified**:
+- `index.md` — Added entries for both new pages, updated cross-cutting themes
+**Purpose**: Establish knowledge base for embedding compression (TurboQuant) and graph-enhanced retrieval (GraphQLite) to guide SP1/SP2 implementation of triple-hybrid RAG stack.
+
+## 2025-07-24 — TurboQuant applicability deep-dive & GraphQLite PDF extraction
+
+**Source**: arXiv:2504.19874 Section 4.4 (NN Search Experiments), GraphQLite-documentation.pdf (261 pages, v0.4.4), web research on TurboQuant implementations (vivekvar-dl, TheTom/turboquant_plus), Diffbot/FalkorDB 2025 GraphRAG benchmarks
+**Operation**: Extended TurboQuant and GraphQLite documentation with official applicability examples, additional implementations, performance benchmarks, and comprehensive architecture details from official PDF extraction.
+**Raw docs saved**:
+- `docs/raw/turboquant/turboquant-applicability-examples.md` — Official paper NN search benchmarks, recall results on OpenAI embeddings, 6 implementation repos with code examples, embedding model compatibility guide, LLM agent decision matrix
+- `docs/raw/graphqlite/graphqlite-full-documentation.md` — Full 261-page PDF extraction (13,089 lines), comprehensive API reference
+- `docs/raw/graphqlite/graphqlite-extended-reference.md` — Curated reference with architecture pipeline, EAV schema details, performance benchmarks, Python API, GraphRAG tutorial code, scaling characteristics
+**Pages modified**:
+- `turboquant-vector-quantization.md` — Added 2 new implementations (vivekvar-dl, TheTom/turboquant_plus), official paper applicability section with recall on OpenAI embeddings, embedding model compatibility table, LLM agent decision matrix and implementation steps
+- `graphqlite-hybrid-rag.md` — Replaced architecture section with PDF-sourced transpiler pipeline details, added typed EAV schema, CSR memory formula table, performance benchmarks table (from official PDF), scaling characteristics table, GraphRAG vs Vector RAG accuracy comparison, Python API quick reference, bulk insert guidance, installation options
+- `index.md` — Updated descriptions for both pages
+**Purpose**: Provide comprehensive implementation guidance for LLM agents building the triple-hybrid RAG stack, including official benchmarks, code patterns, and decision matrices.
