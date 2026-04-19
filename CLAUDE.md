@@ -8,6 +8,7 @@
 
 ## Behaviour
 
+- On loading or using any atifact (rules, skills, agents), always announce at start: "I'm using/loading the <artifact_name> <artifact_type> to <action>."
 - Make sure to evaluate the creation of artefacts for this projects in order to garantee that it will self construct a solid harness to deliver and evolve project properlly. They must always be reviewed to avoid obsolete definitions and be always in sync with the actual state and expected `ROADMAP`.
 - If creating any skill for this project, alway use the skill `/superpowers:writing-skills` to create it.
   - Other artifacs (as rules, subagents, hooks, etc) must use `agent-customizer` plugin skills.
