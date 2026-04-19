@@ -13,8 +13,12 @@ Spec: `docs/specs/sp0-baseline-bench.md` — approved, implementation started 20
 | `jinaai/jina-embeddings-v2-base-code` | ✓ available (code medium) |
 | `nomic-ai/nomic-embed-code` | ✗ NOT in fastembed ONNX — **code small tier skipped** |
 | `Alibaba-NLP/gte-Qwen2-1.5B-instruct` | ✗ NOT in fastembed ONNX — **code large tier skipped** |
+| `BAAI/bge-reranker-v2-m3` | ✗ NOT in fastembed ONNX — **cross-encoder fallback: `BAAI/bge-reranker-base`** |
+| `BAAI/bge-reranker-base` | ✓ available (cross-encoder, Phase 3) |
 
 Code sweep will execute only 1 embedding model tier (jina-base 768d). Report will note that small/large code tiers were skipped and document the reason. See `embedding-models-research` wiki for details on fastembed ONNX model availability.
+
+Cross-encoder judge uses `BAAI/bge-reranker-base` (148M params). `bge-reranker-v2-m3` not in fastembed ONNX registry.
 
 ## Phased implementation
 
@@ -38,14 +42,18 @@ confirm at least 1 config achieves p@5 > 0.
 Completed 2026-04-19: 20 queries verified against actual toolkit corpus. Distribution:
 13 docs / 5 code / 2 all-collection; 5 conceptual + 3 factual + 4 procedural + 6 navigational + 2 failure.
 
-### Phase 3 — Judge plugins
+### Phase 3 — Judge plugins ✅
 
 `bench/judges/base.py`, `bench/judges/cross_encoder.py`, `bench/judges/claude.py`,
 `bench/judges/openai.py`, `bench/judges/ollama.py`, `bench/judges/__init__.py`,
-`bench/tests/test_judge_cross_encoder.py`
+`bench/tests/test_judge_cross_encoder.py`, `bench/tests/test_judge_llm.py`
 
 Gate: Cross-encoder judge produces monotonically higher score for literal query/chunk match
 than random chunk.
+
+Completed 2026-04-19: 76 tests green, 98% coverage. Cross-encoder uses `BAAI/bge-reranker-base`
+(bge-reranker-v2-m3 not in fastembed ONNX). LLM backends (claude/openai/ollama) tested via
+monkeypatch; all ≥93% coverage.
 
 ### Phase 4 — Persistence + checkpoint
 
