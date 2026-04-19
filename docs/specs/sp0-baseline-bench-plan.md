@@ -55,12 +55,16 @@ Completed 2026-04-19: 76 tests green, 98% coverage. Cross-encoder uses `BAAI/bge
 (bge-reranker-v2-m3 not in fastembed ONNX). LLM backends (claude/openai/ollama) tested via
 monkeypatch; all ≥93% coverage.
 
-### Phase 4 — Persistence + checkpoint
+### Phase 4 — Persistence + checkpoint ✅
 
 `bench/persistence.py`, `bench/checkpoint.py`, `bench/tests/test_resume.py`
 
 Gate: `test_resume_skips_completed_units` passes (SIGKILL simulation); corpus-drift test
 rejects without `--allow-corpus-drift`.
+
+Completed 2026-04-19: 99 tests green, 100% coverage on persistence + checkpoint.
+`append_jsonl` uses O_APPEND + fsync; `write_json_atomic` uses tmp+rename+parent-fsync;
+lock via `fcntl.flock(LOCK_EX|LOCK_NB)`; corpus drift check via single hash comparison.
 
 ### Phase 5 — Target + corpus
 
