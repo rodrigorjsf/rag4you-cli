@@ -8,45 +8,45 @@
 
 ## Behaviour
 
-- On loading or using any atifact (rules, skills, agents), always announce at start: "I'm using/loading the <artifact_name> <artifact_type> to <action>."
-- Make sure to evaluate the creation of artefacts for this projects in order to garantee that it will self construct a solid harness to deliver and evolve project properlly. They must always be reviewed to avoid obsolete definitions and be always in sync with the actual state and expected `ROADMAP`.
-- If creating any skill for this project, alway use the skill `/superpowers:writing-skills` to create it.
-  - Other artifacs (as rules, subagents, hooks, etc) must use `agent-customizer` plugin skills.
-- Keep the Claude Code instruction surface (`CLAUDE.md`, `.claude/rules/`) mirrored with the GitHub Copilot instruction surface (`.github/copilot-instructions.md`, `.github/instructions/`). When one side changes, update the equivalent files on the other side in the same task.
-- Use the `wiki` to guide you throught documentations and project specifications.
-- Before implementing a feature, consult `wiki/knowledge/index.md` for relevant research pages. When implementation changes invalidate wiki content, update the affected knowledge pages in the same task.
-- YOU MUST update the `README.md` file whenever you add, remove, or significantly change project functionality, file structures, or environment variables following the `docs/templates/readme-template.md`.
-- After completing any major task or PR, review README.md to ensure it reflects current project state. Reflect on "What did I learn from this task that could be relevant and helpful in future tasks?", and update the `wiki` in a "Learnings" section with the consolidated learnings and also the summary in `Applied Learning`.
+- Loading/using artifact (rules, skills, agents): announce at start: "I'm using/loading the <artifact_name> <artifact_type> to <action>."
+- Evaluate artifact creation for project. Must build solid harness to deliver + evolve. Review always — no obsolete definitions. Stay in sync with `ROADMAP`.
+- Creating skill: use `/superpowers:writing-skills`.
+  - Other artifacts (rules, subagents, hooks, etc): use `agent-customizer` plugin skills.
+- Mirror Claude Code instruction surface (`CLAUDE.md`, `.claude/rules/`) with GitHub Copilot surface (`.github/copilot-instructions.md`, `.github/instructions/`). One side changes → update other side same task.
+- Use `wiki` for docs and project specs.
+- Before implementing feature: consult `wiki/knowledge/index.md` for research pages. Implementation invalidates wiki content → update affected knowledge pages same task.
+- MUST update `README.md` on any add/remove/significant change to functionality, file structures, or env vars. Follow `docs/templates/readme-template.md`.
+- After major task or PR: review README.md for current state. Reflect on learnings → update `wiki` "Learnings" section + `Applied Learning` summary.
 
 ## Advisor
 
-You have access to an `advisor` tool backed by a stronger reviewer model. It takes NO parameters — when you call advisor(), your entire conversation history is automatically forwarded. They see the task, every tool call you've made, every result you've seen.
+`advisor` tool backed by stronger reviewer. No params — full conversation history auto-forwarded.
 
-Call advisor BEFORE substantive work — before writing, before committing to an interpretation, before building on an assumption. If the task requires orientation first (finding files, fetching a source, seeing what's there), do that, then call advisor. Orientation is not substantive work. Writing, editing, and declaring an answer are.
+Call advisor BEFORE substantive work — before writing, committing to interpretation, building on assumption. Orientation first (finding files, fetching source) is OK; then call advisor. Writing, editing, declaring answer = substantive.
 
 Also call advisor:
-- When you believe the task is complete. BEFORE this call, make your deliverable durable: write the file, save the result, commit the change. The advisor call takes time; if the session ends during it, a durable result persists and an unwritten one doesn't.
-- When stuck — errors recurring, approach not converging, results that don't fit.
-- When considering a change of approach.
+- Task complete. Make deliverable durable first (write file, save result, commit). Advisor call takes time; durable result persists if session ends.
+- Stuck — errors recurring, approach not converging, results don't fit.
+- Considering approach change.
 
-On tasks longer than a few steps, call advisor at least once before committing to an approach and once before declaring done. On short reactive tasks where the next action is dictated by tool output you just read, you don't need to keep calling — the advisor adds most of its value on the first call, before the approach crystallizes.
+Longer tasks: call advisor once before committing to approach, once before declaring done. Short reactive tasks: skip — advisor adds most value on first call before approach crystallizes.
 
-Give the advice serious weight. If you follow a step and it fails empirically, or you have primary-source evidence that contradicts a specific claim (the file says X, the paper states Y), adapt. A passing self-test is not evidence the advice is wrong — it's evidence your test doesn't check what the advice is checking.
+Weight advice seriously. Step fails empirically or primary source contradicts claim → adapt. Passing self-test ≠ advice wrong — test doesn't check what advice checks.
 
-If you've already retrieved data pointing one way and the advisor points another: don't silently switch. Surface the conflict in one more advisor call — "I found X, you suggest Y, which constraint breaks the tie?" The advisor saw your evidence but may have underweighted it; a reconcile call is cheaper than committing to the wrong branch.
+Data points one way, advisor points another: don't silently switch. Surface conflict in another advisor call — "I found X, you suggest Y, which breaks the tie?" Reconcile call cheaper than wrong branch.
 
-The advisor should respond in under 100 words and use enumerated steps, not explanations.
+Advisor: respond under 100 words, enumerated steps, no explanations.
 
 ## Memory
 
-Always use the plugin's `claude-mem` tools (artifacts and MCP) to manage your memories.
+Use plugin's `claude-mem` tools (artifacts and MCP) for all memory management.
 
 ## Conventions
 
-Follow python-development plugin skills for all Python patterns, testing strategies, and code style.
+Follow python-development plugin skills for Python patterns, testing strategies, code style.
 
 ## Applied Learning
 
 - Agents fail silently on wrong paths. Always verify hardcoded paths.
-- Before creating a new project artifact, check if an existing one can be extended or merged.
-- Plans file must alway be saved in the project scope.
+- Before new project artifact: check if existing one can be extended or merged.
+- Plans file must always save in project scope.
