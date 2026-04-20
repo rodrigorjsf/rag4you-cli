@@ -93,6 +93,18 @@ Portuguese.
 Execute `bench run --target ~/Workspace/agent-engineering-toolkit` end-to-end.
 Validate `reports/<date>-<hash>/REPORT.md` against REPORT.md acceptance criteria from spec.
 
+### Phase 9 — Post-SP0 roadmap & spec update (research-driven)
+
+After SP0 Phase 8 produces the first real `REPORT.md`, review and update `docs/ROADMAP.md` and `docs/specs/sp0-baseline-bench.md` to incorporate two research directions that were documented in the wiki after the original spec was written:
+
+1. **GraphRAG + vector hybrid approach with SQLite** — the wiki (`wiki/knowledge/`) contains research on combining graph-based retrieval (entity/relationship traversal) with vector search within the existing SQLite stack. Review findings and decide whether SP1 should natively support graph edges, whether the bench sweep matrix needs a new axis (vector-only vs vector+graph), and whether SP0 REPORT.md acceptance criteria should capture graph-coverage metrics.
+
+2. **TurboQuant quantization for embedding models** — the wiki contains research on applying TurboQuant to compress embedding vectors at minimal quality loss. Review findings and update the model registry in `bench/config.py` if new quantized variants are added, update sweep defaults or model tier descriptions in `docs/specs/sp0-baseline-bench.md`, and add a note to the SP2 model decision matrix scope in `docs/ROADMAP.md`.
+
+**Deliverable:** one commit updating `docs/ROADMAP.md` (SP0 status → done; SP1 scope updated to reflect graph+quant findings) and `docs/specs/sp0-baseline-bench.md` (limitations section and SP1 recommendations section updated). No new code in this phase — documentation only.
+
+Gate: `docs/ROADMAP.md` SP0 row has `Status = done`; SP1 row references both graph-hybrid and TurboQuant as inputs to its brainstorm spec.
+
 ## Critical file paths
 
 | Phase | Files |
