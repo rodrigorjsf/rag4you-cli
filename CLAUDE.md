@@ -37,10 +37,6 @@ Data points one way, advisor points another: don't silently switch. Surface conf
 
 Advisor: respond under 100 words, enumerated steps, no explanations.
 
-## Memory
-
-Use plugin's `claude-mem` tools (artifacts and MCP) for all memory management.
-
 ## Conventions
 
 Follow python-development plugin skills for Python patterns, testing strategies, code style.

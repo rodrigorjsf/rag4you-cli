@@ -1,0 +1,1 @@
+- Before loading or reading any file, count its lines amount first, context is king, so if a file is too large consider a smarter way to navigate than just full loading it in the context.
