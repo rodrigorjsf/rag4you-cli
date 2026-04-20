@@ -111,3 +111,20 @@ Append-only record of all wiki operations.
 - `graphqlite-hybrid-rag.md` — Replaced architecture section with PDF-sourced transpiler pipeline details, added typed EAV schema, CSR memory formula table, performance benchmarks table (from official PDF), scaling characteristics table, GraphRAG vs Vector RAG accuracy comparison, Python API quick reference, bulk insert guidance, installation options
 - `index.md` — Updated descriptions for both pages
 **Purpose**: Provide comprehensive implementation guidance for LLM agents building the triple-hybrid RAG stack, including official benchmarks, code patterns, and decision matrices.
+
+## 2026-04-19 — KV-cache quantization paper ingestion (QJL / TurboQuant / PolarQuant)
+
+**Source**: docs/raw/turboquant/1-bit-quantized.pdf (QJL), docs/raw/turboquant/turbo-quant.pdf (TurboQuant), docs/raw/turboquant/polar-quant.pdf (PolarQuant)
+**Operation**: Extracted 3 PDFs to docs/research/turboquant/ via pymupdf4llm, then created a unified wiki knowledge page analyzing applicability to rag4you-cli embedding storage.
+**Raw docs saved**:
+
+- `docs/research/turboquant/1-bit-quantized.md` — QJL paper full extraction (318 lines)
+- `docs/research/turboquant/turbo-quant.md` — TurboQuant paper full extraction (614 lines)
+- `docs/research/turboquant/polar-quant.md` — PolarQuant paper full extraction (498 lines)
+**Pages created**:
+
+- `vector-quantization-research.md` — 8-section analysis: QJL algorithm (sign(S·k), unbiased inner product), TurboQuant (random rotation + Lloyd-Max + QJL residual, near-optimal distortion), PolarQuant (recursive polar transform, 3.875 bits/coord), sqlite-vec compatibility constraints (float32 required → quantization is SP2 not SP0), ANN recall comparison (TurboQuant 0.0013s indexing vs PQ 240s at d=1536), 3 implementation paths
+**Pages modified**:
+
+- `index.md` — Added `vector-quantization-research` entry under RAG foundations; added cross-cutting theme for vector quantization algorithms
+**Purpose**: Research foundation for SP2 model-tier and storage-tier decisions; TurboQuant ANN recall results inform "quantized 4-bit 768-d vs raw float32 384-d" comparison.
