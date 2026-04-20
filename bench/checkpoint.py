@@ -169,6 +169,46 @@ class Checkpoint:
             os.close(self._lock_fd)
             self._lock_fd = None
 
+    # ── Index state ──────────────────────────────────────────────────────────
+
+    def is_indexed(self, config_id: str) -> bool:
+        """Return True if config_id has been successfully indexed in this run."""
+        path = self._run_dir / "index-state.json"
+        try:
+            data = read_json(path)
+            return config_id in data
+        except Exception:
+            return False
+
+    def mark_indexed(
+        self, config_id: str, wall_time_s: float, collection: str | None = None
+    ) -> None:
+        """Record that config_id has been indexed; atomically updates index-state.json."""
+        path = self._run_dir / "index-state.json"
+        try:
+            data = read_json(path)
+        except Exception:
+            data = {}
+        data[config_id] = {"wall_time_s": wall_time_s, "collection": collection}
+        write_json_atomic(path, data)
+
+    # ── Error logging ─────────────────────────────────────────────────────────
+
+    def record_error(
+        self,
+        config_id: str,
+        query_id: str | None,
+        phase: str,
+        error: str,
+    ) -> None:
+        """Append an error record to errors.jsonl."""
+        append_jsonl(
+            self._run_dir / "errors.jsonl",
+            {"config_id": config_id, "query_id": query_id, "phase": phase, "error": error},
+        )
+
+    # ── Context manager ───────────────────────────────────────────────────────
+
     def __enter__(self) -> Checkpoint:
         self.acquire_lock()
         return self
